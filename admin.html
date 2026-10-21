@@ -4,37 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buyzen Admin Panel</title>
+
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f7f0;
       color: #243b2b;
     }
+
     header {
       background: #176b3a;
       color: white;
-      padding: 22px 16px;
+      padding: 18px;
       text-align: center;
     }
+
     main {
-      max-width: 650px;
-      margin: 24px auto;
-      padding: 18px;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 15px;
     }
+
     .card {
       background: white;
-      padding: 22px;
+      padding: 20px;
       border-radius: 14px;
+      margin-bottom: 18px;
       box-shadow: 0 3px 14px #00000012;
     }
-    h2 { margin-top: 0; }
+
     label {
       display: block;
       margin-top: 14px;
       font-weight: bold;
     }
+
     input, textarea, select, button {
       width: 100%;
       padding: 12px;
@@ -42,10 +49,12 @@
       border-radius: 8px;
       font-size: 16px;
     }
+
     input, textarea, select {
       border: 1px solid #ccd5ca;
       background: white;
     }
+
     button {
       border: 0;
       background: #176b3a;
@@ -53,15 +62,45 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .note {
-      margin-top: 18px;
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .secondary {
+      background: #46554b;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
       padding: 12px;
-      background: #fff4d6;
+      margin-top: 14px;
+      background: #eef5ec;
       border-radius: 8px;
+      overflow-wrap: anywhere;
       line-height: 1.6;
+    }
+
+    .product {
+      border: 1px solid #ddd;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+    }
+
+    .product img {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+      border-radius: 8px;
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Buyzen Admin Panel</h1>
@@ -69,17 +108,47 @@
   </header>
 
   <main>
-    <section class="card">
+
+    <section class="card" id="loginSection">
+      <h2>Admin Login</h2>
+
+      <form id="loginForm">
+        <label for="email">আপনার ইমেইল</label>
+        <input id="email" type="email" required
+          autocomplete="username"
+          placeholder="আপনার ইমেইল লিখুন">
+
+        <label for="password">পাসওয়ার্ড</label>
+        <input id="password" type="password" required
+          autocomplete="current-password"
+          placeholder="পাসওয়ার্ড লিখুন">
+
+        <button id="loginButton" type="submit">লগইন করুন</button>
+      </form>
+
+      <div class="message" id="loginMessage" role="status">
+        লগইন করতে আপনার Admin অ্যাকাউন্ট ব্যবহার করুন।
+      </div>
+    </section>
+
+    <section class="card hidden" id="adminSection">
       <h2>নতুন পণ্য যোগ করুন</h2>
 
+      <p id="signedInUser"></p>
+
+      <button type="button" id="logoutButton"
+        class="secondary">লগআউট</button>
+
       <form id="productForm">
+
         <label for="name">পণ্যের নাম</label>
-        <input id="name" type="text"
-          placeholder="যেমন: খাঁটি আখের গুড়" required>
+        <input id="name" type="text" required
+          placeholder="যেমন: খাঁটি আখের গুড়">
 
         <label for="price">দাম (টাকা)</label>
         <input id="price" type="number"
-          min="1" placeholder="যেমন: 200" required>
+          min="0.01" step="0.01" required
+          placeholder="যেমন: 200">
 
         <label for="category">ক্যাটাগরি</label>
         <select id="category" required>
@@ -94,27 +163,419 @@
         <textarea id="description" rows="4"
           placeholder="পণ্যের বিবরণ লিখুন"></textarea>
 
-        <label for="image">পণ্যের ছবির লিংক</label>
-        <input id="image" type="url"
-          placeholder="https://example.com/image.jpg">
+        <label for="stock">স্টকের পরিমাণ</label>
+        <input id="stock" type="number"
+          min="0" step="1" value="10" required>
 
-        <button type="submit">পণ্য যোগ করুন</button>
+        <label for="imageFile">পণ্যের ছবি</label>
+        <input id="imageFile" type="file"
+          accept="image/jpeg,image/png,image/webp"
+          required>
+
+        <button id="saveButton" type="submit">
+          ছবি আপলোড করে পণ্য সংরক্ষণ করুন
+        </button>
       </form>
 
-      <div class="note" id="message">
-        এটি প্রাথমিক ডিজাইন। এখনো পণ্য Supabase-এ সংরক্ষিত হবে না।
-        নিরাপদ লগইন ও ডেটাবেস সংযোগ পরের ধাপে যোগ করা হবে।
-      </div>
+      <div class="message" id="productMessage"
+        role="status"></div>
     </section>
+
+    <section class="card hidden" id="productsSection">
+      <h2>সংরক্ষিত পণ্য</h2>
+      <button type="button" id="refreshButton"
+        class="secondary">পণ্যের তালিকা রিফ্রেশ করুন</button>
+      <div id="productsList"></div>
+    </section>
+
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    document.getElementById("productForm")
-      .addEventListener("submit", function(event) {
+    // ধাপ ২: এখানে নিজের Supabase তথ্য বসাও।
+    const SUPABASE_URL =
+      "https://hltvfckfbqegqsiimduw.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+    // এখানে Supabase-এ তৈরি করা Admin-এর ইমেইল বসাও।
+    const ADMIN_EMAIL = "YOUR_ADMIN_EMAIL_HERE";
+
+    const BUCKET_NAME = "product-images";
+
+    const loginSection = document.getElementById("loginSection");
+    const adminSection = document.getElementById("adminSection");
+    const productsSection = document.getElementById("productsSection");
+
+    const loginMessage = document.getElementById("loginMessage");
+    const productMessage = document.getElementById("productMessage");
+
+    let supabaseClient = null;
+    let busy = false;
+
+    function showMessage(element, message) {
+      element.textContent = message;
+    }
+
+    function setBusy(value) {
+      busy = value;
+      document.getElementById("loginButton").disabled = value;
+      document.getElementById("saveButton").disabled = value;
+      document.getElementById("logoutButton").disabled = value;
+    }
+
+    function isAdmin(user) {
+      return Boolean(
+        user &&
+        user.email &&
+        user.email.toLowerCase() === ADMIN_EMAIL.trim().toLowerCase()
+      );
+    }
+
+    function showLoggedOut() {
+      loginSection.classList.remove("hidden");
+      adminSection.classList.add("hidden");
+      productsSection.classList.add("hidden");
+    }
+
+    async function showLoggedIn(user) {
+      if (!isAdmin(user)) {
+        showLoggedOut();
+        showMessage(
+          loginMessage,
+          "এই ইমেইলটি Admin হিসেবে অনুমোদিত নয়।"
+        );
+        return;
+      }
+
+      loginSection.classList.add("hidden");
+      adminSection.classList.remove("hidden");
+      productsSection.classList.remove("hidden");
+
+      document.getElementById("signedInUser").textContent =
+        "লগইন করা হয়েছে: " + user.email;
+
+      await loadProducts();
+    }
+
+    async function init() {
+      if (!window.supabase) {
+        showMessage(
+          loginMessage,
+          "Supabase লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।"
+        );
+        return;
+      }
+
+      if (
+        !SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_") ||
+        ADMIN_EMAIL === "YOUR_ADMIN_EMAIL_HERE" ||
+        !ADMIN_EMAIL.includes("@")
+      ) {
+        showMessage(
+          loginMessage,
+          "প্রথমে Supabase Publishable Key এবং Admin Email বসাও।"
+        );
+        return;
+      }
+
+      supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }
+      );
+
+      const { data, error } =
+        await supabaseClient.auth.getSession();
+
+      if (error) {
+        showMessage(loginMessage, "লগইন তথ্য পড়া যায়নি: " + error.message);
+        return;
+      }
+
+      if (data.session) {
+        await showLoggedIn(data.session.user);
+      }
+
+      supabaseClient.auth.onAuthStateChange(
+        (event, session) => {
+          setTimeout(async () => {
+            if (session) {
+              await showLoggedIn(session.user);
+            } else {
+              showLoggedOut();
+            }
+          }, 0);
+        }
+      );
+    }
+
+    document.getElementById("loginForm")
+      .addEventListener("submit", async function(event) {
         event.preventDefault();
-        document.getElementById("message").textContent =
-          "Admin Panel-এর ডিজাইন প্রস্তুত। ডেটাবেস সংযোগের পর পণ্য সংরক্ষণ চালু হবে।";
+
+        if (!supabaseClient || busy) return;
+
+        const email =
+          document.getElementById("email").value.trim();
+
+        const password =
+          document.getElementById("password").value;
+
+        if (email.toLowerCase() !== ADMIN_EMAIL.trim().toLowerCase()) {
+          showMessage(loginMessage, "এই ইমেইলটি Admin ইমেইলের সঙ্গে মিলছে না।");
+          return;
+        }
+
+        setBusy(true);
+
+        try {
+          const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+              email,
+              password
+            });
+
+          if (error) throw error;
+
+          if (!isAdmin(data.user)) {
+            await supabaseClient.auth.signOut();
+            throw new Error("এই অ্যাকাউন্টটি Admin হিসেবে অনুমোদিত নয়।");
+          }
+
+          showMessage(loginMessage, "লগইন সফল হয়েছে।");
+
+          await showLoggedIn(data.user);
+
+        } catch (error) {
+          showMessage(loginMessage, "লগইন ব্যর্থ: " + error.message);
+        } finally {
+          setBusy(false);
+        }
       });
+
+    document.getElementById("logoutButton")
+      .addEventListener("click", async function() {
+        if (!supabaseClient || busy) return;
+
+        setBusy(true);
+
+        try {
+          const { error } = await supabaseClient.auth.signOut();
+          if (error) throw error;
+
+          showLoggedOut();
+          showMessage(loginMessage, "লগআউট সফল হয়েছে।");
+
+        } catch (error) {
+          showMessage(productMessage, "লগআউট ব্যর্থ: " + error.message);
+        } finally {
+          setBusy(false);
+        }
+      });
+
+    document.getElementById("productForm")
+      .addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        if (!supabaseClient || busy) return;
+
+        const { data: authData, error: authError } =
+          await supabaseClient.auth.getUser();
+
+        if (authError || !isAdmin(authData.user)) {
+          showMessage(productMessage, "প্রথমে অনুমোদিত Admin হিসেবে লগইন করো।");
+          showLoggedOut();
+          return;
+        }
+
+        const name = document.getElementById("name").value.trim();
+        const price = Number(document.getElementById("price").value);
+        const category = document.getElementById("category").value;
+        const description =
+          document.getElementById("description").value.trim();
+        const stock = Number(document.getElementById("stock").value);
+        const file = document.getElementById("imageFile").files[0];
+
+        if (!name || !category || !file) {
+          showMessage(productMessage, "পণ্যের নাম, ক্যাটাগরি ও ছবি দিতে হবে।");
+          return;
+        }
+
+        if (!Number.isFinite(price) || price <= 0) {
+          showMessage(productMessage, "সঠিক দাম লিখো।");
+          return;
+        }
+
+        if (!Number.isInteger(stock) || stock < 0) {
+          showMessage(productMessage, "স্টকের পরিমাণ শূন্য বা তার বেশি পূর্ণসংখ্যা হতে হবে।");
+          return;
+        }
+
+        const allowedTypes = [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+          showMessage(productMessage, "শুধু JPG, PNG অথবা WebP ছবি আপলোড করা যাবে।");
+          return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          showMessage(productMessage, "ছবির আকার ৫ MB-এর কম হতে হবে।");
+          return;
+        }
+
+        setBusy(true);
+
+        let uploadedPath = null;
+
+        try {
+          showMessage(productMessage, "ছবি আপলোড হচ্ছে...");
+
+          const safeName = file.name
+            .normalize("NFKD")
+            .replace(/[^a-zA-Z0-9._-]/g, "-")
+            .slice(-100);
+
+          const filePath =
+            authData.user.id + "/" +
+            Date.now() + "-" + safeName;
+
+          const { data: uploadData, error: uploadError } =
+            await supabaseClient.storage
+              .from(BUCKET_NAME)
+              .upload(filePath, file, {
+                contentType: file.type,
+                upsert: false
+              });
+
+          if (uploadError) throw uploadError;
+
+          uploadedPath = uploadData.path;
+
+          const { data: publicData } =
+            supabaseClient.storage
+              .from(BUCKET_NAME)
+              .getPublicUrl(uploadedPath);
+
+          const imageUrl = publicData.publicUrl;
+
+          showMessage(productMessage, "ছবি আপলোড হয়েছে। পণ্য সংরক্ষণ হচ্ছে...");
+
+          const product = {
+            name,
+            description,
+            price,
+            image: imageUrl,
+            category,
+            stock,
+            is_active: true
+          };
+
+          const { error: insertError } =
+            await supabaseClient
+              .from("products")
+              .insert(product);
+
+          if (insertError) throw insertError;
+
+          showMessage(
+            productMessage,
+            "সফল! পণ্য Database-এ সংরক্ষণ হয়েছে।"
+          );
+
+          document.getElementById("productForm").reset();
+          document.getElementById("stock").value = "10";
+
+          await loadProducts();
+
+        } catch (error) {
+          showMessage(
+            productMessage,
+            "পণ্য সংরক্ষণ হয়নি: " + error.message +
+            (uploadedPath
+              ? " ছবিটি Storage-এ আপলোড হয়েছে; প্রয়োজনে পরে পরিষ্কার করতে হবে।"
+              : "")
+          );
+        } finally {
+          setBusy(false);
+        }
+      });
+
+    async function loadProducts() {
+      if (!supabaseClient) return;
+
+      const list = document.getElementById("productsList");
+      list.replaceChildren();
+
+      const { data, error } = await supabaseClient
+        .from("products")
+        .select("name, price, category, image, stock, is_active")
+        .order("name", { ascending: true })
+        .limit(100);
+
+      if (error) {
+        list.textContent =
+          "পণ্যের তালিকা লোড হয়নি: " + error.message;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.textContent = "এখনো কোনো পণ্য পাওয়া যায়নি।";
+        return;
+      }
+
+      data.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "product";
+
+        const title = document.createElement("h3");
+        title.textContent = product.name;
+
+        const price = document.createElement("p");
+        price.textContent = "দাম: ৳" + product.price;
+
+        const category = document.createElement("p");
+        category.textContent = "ক্যাটাগরি: " + product.category;
+
+        const stock = document.createElement("p");
+        stock.textContent = "স্টক: " + product.stock;
+
+        card.append(title, price, category, stock);
+
+        if (product.image) {
+          try {
+            const imageUrl = new URL(product.image);
+
+            if (imageUrl.protocol === "https:") {
+              const img = document.createElement("img");
+              img.src = imageUrl.href;
+              img.alt = product.name;
+              img.loading = "lazy";
+              card.appendChild(img);
+            }
+          } catch (_) {}
+        }
+
+        list.appendChild(card);
+      });
+    }
+
+    document.getElementById("refreshButton")
+      .addEventListener("click", loadProducts);
+
+    init();
   </script>
 </body>
 </html>
