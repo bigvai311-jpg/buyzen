@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#176b2c">
+  <meta name="description" content="Buyzen - আখের গুড়, আখের চিনি, মধু ও খাঁটি পণ্যের অনলাইন শপ।">
+  <title>Buyzen | প্রকৃতির আসল স্বাদ</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;color:#183b20;background:#fff}
+    .top{background:#176b2c;color:white;text-align:center;padding:10px;font-size:13px}
+    header{padding:15px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .logo{font-size:25px;font-weight:800;color:#176b2c}
+    .logo span{color:#d83222}
+    .icons{font-size:23px;color:#173b20}
+    .search{margin:0 14px 14px;background:#f2f3ef;border-radius:30px;padding:12px 16px}
+    .search input{border:0;outline:0;background:transparent;width:90%;font-size:15px}
+    .hero{padding:28px 20px;background:linear-gradient(110deg,#f5f3d5,#dce9bd);display:flex;align-items:center;gap:10px;min-height:250px}
+    .hero .copy{flex:1}
+    .hero small{font-size:15px;color:#28632d}
+    .hero h1{font-size:35px;line-height:1.3;color:#82451e;margin:8px 0}
+    .hero p{font-size:14px;line-height:1.8;margin:6px 0 16px}
+    .hero img{width:44%;border-radius:48% 48% 15px 15px;object-fit:cover}
+    .btn{display:inline-block;background:#176b2c;color:white;padding:12px 18px;border:0;border-radius:25px;text-decoration:none;font-weight:bold;cursor:pointer}
+    .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px 12px}
+    .cat{text-align:center;font-size:13px;font-weight:bold}
+    .cat img{width:75px;height:75px;object-fit:cover;border-radius:50%;background:#f8f1df}
+    .services{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;background:#f0f5e7;padding:18px;text-align:center;font-size:13px}
+    .services div{padding:7px}
+    h2{font-size:23px;margin:24px 15px 15px}
+    .products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 12px 25px}
+    .product{border:1px solid #e7e7e0;border-radius:12px;overflow:hidden;box-shadow:0 2px 7px #0000000c}
+    .product img{width:100%;height:145px;object-fit:cover}
+    .info{padding:10px}
+    .info h3{font-size:15px;margin:0 0 8px}
+    .price{font-size:19px;font-weight:bold;margin:8px 0;color:#183b20}
+    .buy{width:100%;border:0;border-radius:7px;background:#176b2c;color:white;padding:11px 4px;font-weight:bold;cursor:pointer}
+    footer{text-align:center;padding:25px 12px;background:#f2f5ed;font-size:13px;line-height:2}
+    .notice{margin:12px;padding:12px;background:#fff4d9;border-radius:8px;font-size:13px}
+    @media(min-width:700px){.hero{padding:55px 8%;}.hero h1{font-size:48px}.cats{grid-template-columns:repeat(6,1fr)}.services{grid-template-columns:repeat(4,1fr)}.products{grid-template-columns:repeat(4,1fr)}main{max-width:1100px;margin:auto}}
+  </style>
+</head>
+<body>
+  <div class="top">🚚 সারা বাংলাদেশে ডেলিভারি &nbsp; | &nbsp; ☎️ ২৪/৭ কাস্টমার সাপোর্ট</div>
+  <header>
+    <div class="icons">☰</div>
+    <div class="logo">🌿 Buy<span>zen</span></div>
+    <div class="icons">🛒</div>
+  </header>
+  <div class="search">🔍 <input id="search" placeholder="আপনার পছন্দের পণ্য খুঁজুন..." oninput="filterProducts()"></div>
+  <main>
+    <section class="hero">
+      <div class="copy">
+        <small>প্রকৃতির উপহার</small>
+        <h1>খাঁটি আখের গুড়</h1>
+        <p>খাঁটি স্বাদ, যত্নে বাছাই করা পণ্য।<br>সারা বাংলাদেশে ডেলিভারি।</p>
+        <a class="btn" href="#products">এখনই কিনুন →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1604495772376-9657f0035eb5?auto=format&fit=crop&w=500&q=80" alt="প্রাকৃতিক খাবার">
+    </section>
+    <section class="cats">
+      <div class="cat"><img src="https://images.unsplash.com/photo-1604495772376-9657f0035eb5?auto=format&fit=crop&w=200&q=80" alt=""><p>আখের গুড়</p></div>
+      <div class="cat"><img src="https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=200&q=80" alt=""><p>আখের চিনি</p></div>
+      <div class="cat"><img src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=200&q=80" alt=""><p>মধু</p></div>
+      <div class="cat"><img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=200&q=80" alt=""><p>সরিষার তেল</p></div>
+      <div class="cat"><img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=200&q=80" alt=""><p>নারিকেল</p></div>
+      <div class="cat"><img src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=200&q=80" alt=""><p>মাটির পণ্য</p></div>
+    </section>
+    <section class="services">
+      <div>🌿<br>খাঁটি পণ্য</div>
+      <div>🚚<br>দ্রুত ডেলিভারি</div>
+      <div>🛡️<br>নিরাপদ অর্ডার</div>
+      <div>🎧<br>কাস্টমার সাপোর্ট</div>
+    </section>
+    <h2 id="products">⭐ আমাদের পণ্য</h2>
+    <section class="products" id="productList">
+      <article class="product" data-name="আখের গুড়">
+        <img src="https://images.unsplash.com/photo-1604495772376-9657f0035eb5?auto=format&fit=crop&w=500&q=80" alt="আখের গুড়">
+        <div class="info"><h3>আখের গুড় (১ কেজি)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ২০০</div><button class="buy" onclick="order('আখের গুড় (১ কেজি)',200)">অর্ডার করুন</button></div>
+      </article>
+      <article class="product" data-name="আখের চিনি">
+        <img src="https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=500&q=80" alt="চিনি">
+        <div class="info"><h3>আখের চিনি (১ কেজি)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ১৮০</div><button class="buy" onclick="order('আখের চিনি (১ কেজি)',180)">অর্ডার করুন</button></div>
+      </article>
+      <article class="product" data-name="প্রাকৃতিক মধু">
+        <img src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=500&q=80" alt="মধু">
+        <div class="info"><h3>প্রাকৃতিক মধু (৫০০ গ্রাম)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ৩৫০</div><button class="buy" onclick="order('প্রাকৃতিক মধু (৫০০ গ্রাম)',350)">অর্ডার করুন</button></div>
+      </article>
+      <article class="product" data-name="সরিষার তেল">
+        <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=500&q=80" alt="সরিষার তেল">
+        <div class="info"><h3>সরিষার তেল (১ লিটার)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ২৮০</div><button class="buy" onclick="order('সরিষার তেল (১ লিটার)',280)">অর্ডার করুন</button></div>
+      </article>
+    </section>
+    <div class="notice">ℹ️ এখানে দেখানো দাম নমুনা। বিক্রির আগে সঠিক দাম, পণ্যের ছবি ও ডেলিভারি চার্জ ঠিক করে নেবে।</div>
+  </main>
+  <footer>🌿 Buyzen — প্রকৃতির আসল স্বাদ<br>যোগাযোগ | ডেলিভারি নীতি | রিটার্ন নীতি<br>© Buyzen</footer>
+  <script>
+    function filterProducts(){
+      const q=document.getElementById('search').value.toLowerCase();
+      document.querySelectorAll('.product').forEach(p=>{
+        p.style.display=p.dataset.name.toLowerCase().includes(q)?'':'none';
+      });
+    }
+    function order(name,price){
+      alert('আপনি বেছে নিয়েছেন: '+name+'\nমূল্য: ৳ '+price+'\n\nএটি এখন ডিজাইনের নমুনা। অর্ডার গ্রহণের জন্য পরবর্তী ধাপে চেকআউট যুক্ত করব।');
+    }
+  </script>
+</body>
+</html>
