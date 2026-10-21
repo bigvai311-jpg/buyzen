@@ -102,11 +102,48 @@
         p.style.display=p.dataset.name.toLowerCase().includes(q)?'':'none';
       });
     }
-    function order(name,price){
-      alert('আপনি বেছে নিয়েছেন: '+name+'\nমূল্য: ৳ '+price+'\n\nএটি এখন ডিজাইনের নমুনা। অর্ডার গ্রহণের জন্য পরবর্তী ধাপে চেকআউট যুক্ত করব।');
-    }
+    function order(name, price) {
+  const customerName = prompt("আপনার নাম লিখুন:");
+  if (!customerName) return;
+
+  const phone = prompt("আপনার মোবাইল নম্বর লিখুন:");
+  if (!phone) return;
+
+  const address = prompt("আপনার সম্পূর্ণ ঠিকানা লিখুন:");
+  if (!address) return;
+
+  saveOrder(customerName, phone, address, name, price);
+}
     const SUPABASE_URL = "https://hltvfckfbqegqsiimduw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
+    async function saveOrder(customerName, phone, address, name, price) {
+  try {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({
+        customer_name: customerName,
+        phone: phone,
+        address: address,
+        items: [{ name: name, price: Number(price), quantity: 1 }],
+        total_amount: Number(price),
+        status: "pending"
+      })
+    });
+
+    if (!response.ok) throw new Error(await response.text());
+
+    alert("আপনার অর্ডার গ্রহণ করা হয়েছে!");
+  } catch (error) {
+    console.error(error);
+    alert("অর্ডার জমা হয়নি। আবার চেষ্টা করুন।");
+  }
+}
   </script>
 </body>
 </html>
