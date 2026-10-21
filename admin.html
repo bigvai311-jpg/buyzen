@@ -5,53 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buyzen Admin Panel</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7f0;
-      color: #243b2b;
+      background: #f3f6f4;
+      color: #203328;
     }
 
     header {
       background: #176b3a;
       color: white;
       padding: 18px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 23px;
     }
 
     main {
-      max-width: 700px;
+      max-width: 1000px;
       margin: 20px auto;
-      padding: 15px;
+      padding: 12px;
     }
 
     .card {
       background: white;
       padding: 20px;
-      border-radius: 14px;
-      margin-bottom: 18px;
-      box-shadow: 0 3px 14px #00000012;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 21px;
     }
 
     label {
       display: block;
-      margin-top: 14px;
+      margin-top: 13px;
       font-weight: bold;
     }
 
     input, textarea, select, button {
       width: 100%;
       padding: 12px;
-      margin-top: 7px;
-      border-radius: 8px;
+      margin-top: 6px;
+      border-radius: 7px;
       font-size: 16px;
     }
 
     input, textarea, select {
-      border: 1px solid #ccd5ca;
+      border: 1px solid #ccd5ce;
       background: white;
     }
 
@@ -69,7 +87,18 @@
     }
 
     .secondary {
-      background: #46554b;
+      background: #43564a;
+    }
+
+    .danger {
+      background: #b42318;
+    }
+
+    .small-button {
+      width: auto;
+      padding: 9px 12px;
+      margin: 4px 3px 4px 0;
+      font-size: 14px;
     }
 
     .hidden {
@@ -78,504 +107,485 @@
 
     .message {
       padding: 12px;
-      margin-top: 14px;
-      background: #eef5ec;
-      border-radius: 8px;
+      border-radius: 7px;
+      margin-top: 12px;
+      background: #edf5ef;
       overflow-wrap: anywhere;
-      line-height: 1.6;
+      line-height: 1.5;
+    }
+
+    .error {
+      background: #ffeded;
+      color: #a00000;
     }
 
     .product {
-      border: 1px solid #ddd;
-      padding: 12px;
+      border: 1px solid #e0e5e1;
+      padding: 14px;
+      border-radius: 9px;
       margin-top: 12px;
-      border-radius: 10px;
+      overflow-wrap: anywhere;
     }
 
     .product img {
-      width: 100%;
-      max-width: 180px;
-      height: auto;
-      border-radius: 8px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 7px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .muted {
+      color: #647067;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .order {
+      border: 1px solid #e0e5e1;
+      border-radius: 9px;
+      padding: 14px;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: inherit;
     }
   </style>
 </head>
 
 <body>
-  <header>
+
+<header>
+  <div>
     <h1>Buyzen Admin Panel</h1>
-    <p>আপনার অনলাইন দোকান পরিচালনা করুন</p>
-  </header>
+    <div>আপনার অনলাইন দোকান পরিচালনা করুন</div>
+  </div>
 
-  <main>
+  <button id="logoutBtn"
+          class="secondary hidden"
+          style="width:auto"
+          type="button">
+    Logout
+  </button>
+</header>
 
-    <section class="card" id="loginSection">
-      <h2>Admin Login</h2>
+<main>
 
-      <form id="loginForm">
-        <label for="email">আপনার ইমেইল</label>
-        <input id="email" type="email" required
-          autocomplete="username"
-          placeholder="আপনার ইমেইল লিখুন">
+  <!-- LOGIN -->
+  <section id="loginSection" class="card">
+    <h2>Admin Login</h2>
 
-        <label for="password">পাসওয়ার্ড</label>
-        <input id="password" type="password" required
-          autocomplete="current-password"
-          placeholder="পাসওয়ার্ড লিখুন">
+    <form id="loginForm">
+      <label for="loginEmail">ইমেইল</label>
+      <input
+        id="loginEmail"
+        type="email"
+        autocomplete="username"
+        required
+      >
 
-        <button id="loginButton" type="submit">লগইন করুন</button>
-      </form>
+      <label for="loginPassword">পাসওয়ার্ড</label>
+      <input
+        id="loginPassword"
+        type="password"
+        autocomplete="current-password"
+        required
+      >
 
-      <div class="message" id="loginMessage" role="status">
-        লগইন করতে আপনার Admin অ্যাকাউন্ট ব্যবহার করুন।
-      </div>
-    </section>
+      <button id="loginBtn" type="submit">Login করুন</button>
+    </form>
 
-    <section class="card hidden" id="adminSection">
-      <h2>নতুন পণ্য যোগ করুন</h2>
+    <div id="loginMessage" class="message" role="status">
+      Supabase-এ আগে তৈরি করা Admin অ্যাকাউন্ট দিয়ে Login করুন।
+    </div>
+  </section>
 
-      <p id="signedInUser"></p>
 
-      <button type="button" id="logoutButton"
-        class="secondary">লগআউট</button>
+  <!-- ADMIN DASHBOARD -->
+  <section id="dashboard" class="hidden">
+
+    <div class="card">
+      <h2>ড্যাশবোর্ড</h2>
+      <p id="adminInfo" class="muted"></p>
+
+      <button id="refreshBtn" type="button" class="secondary">
+        তথ্য Refresh করুন
+      </button>
+
+      <div id="dashboardMessage"
+           class="message hidden"
+           role="status"></div>
+    </div>
+
+
+    <!-- ADD PRODUCT -->
+    <section class="card">
+      <h2 id="formHeading">নতুন পণ্য যোগ করুন</h2>
 
       <form id="productForm">
 
-        <label for="name">পণ্যের নাম</label>
-        <input id="name" type="text" required
-          placeholder="যেমন: খাঁটি আখের গুড়">
+        <label for="productName">পণ্যের নাম</label>
+        <input
+          id="productName"
+          type="text"
+          maxlength="200"
+          placeholder="যেমন: খাঁটি আখের গুড়"
+          required
+        >
 
-        <label for="price">দাম (টাকা)</label>
-        <input id="price" type="number"
-          min="0.01" step="0.01" required
-          placeholder="যেমন: 200">
+        <label for="productPrice">দাম (টাকা)</label>
+        <input
+          id="productPrice"
+          type="number"
+          min="0.01"
+          step="0.01"
+          required
+        >
 
-        <label for="category">ক্যাটাগরি</label>
-        <select id="category" required>
+        <label for="productCategory">ক্যাটাগরি</label>
+        <select id="productCategory" required>
           <option value="">ক্যাটাগরি নির্বাচন করুন</option>
           <option value="গুড়">গুড়</option>
           <option value="মধু">মধু</option>
           <option value="সরিষার তেল">সরিষার তেল</option>
+          <option value="কৃষিপণ্য">কৃষিপণ্য</option>
           <option value="অন্যান্য">অন্যান্য</option>
         </select>
 
-        <label for="description">পণ্যের বিবরণ</label>
-        <textarea id="description" rows="4"
-          placeholder="পণ্যের বিবরণ লিখুন"></textarea>
+        <label for="productStock">স্টক সংখ্যা</label>
+        <input
+          id="productStock"
+          type="number"
+          min="0"
+          step="1"
+          value="0"
+          required
+        >
 
-        <label for="stock">স্টকের পরিমাণ</label>
-        <input id="stock" type="number"
-          min="0" step="1" value="10" required>
+        <label for="productDescription">পণ্যের বিবরণ</label>
+        <textarea
+          id="productDescription"
+          rows="4"
+          maxlength="5000"
+          placeholder="পণ্যের বিস্তারিত লিখুন"
+        ></textarea>
 
-        <label for="imageFile">পণ্যের ছবি</label>
-        <input id="imageFile" type="file"
+        <label for="productImage">পণ্যের ছবি</label>
+        <input
+          id="productImage"
+          type="file"
           accept="image/jpeg,image/png,image/webp"
-          required>
+        >
 
-        <button id="saveButton" type="submit">
-          ছবি আপলোড করে পণ্য সংরক্ষণ করুন
+        <p class="muted">
+          JPG, PNG বা WebP ছবি ব্যবহার করো। সর্বোচ্চ ৫ MB।
+          ছবি না দিলে আগের ছবিটি অপরিবর্তিত থাকবে।
+        </p>
+
+        <button id="saveProductBtn" type="submit">
+          পণ্য সংরক্ষণ করুন
         </button>
+
+        <button
+          id="cancelEditBtn"
+          type="button"
+          class="secondary hidden"
+        >
+          Edit বাতিল করুন
+        </button>
+
       </form>
 
-      <div class="message" id="productMessage"
-        role="status"></div>
+      <div id="productMessage"
+           class="message hidden"
+           role="status"></div>
     </section>
 
-    <section class="card hidden" id="productsSection">
-      <h2>সংরক্ষিত পণ্য</h2>
-      <button type="button" id="refreshButton"
-        class="secondary">পণ্যের তালিকা রিফ্রেশ করুন</button>
-      <div id="productsList"></div>
+
+    <!-- PRODUCT LIST -->
+    <section class="card">
+      <h2>আমার পণ্যসমূহ</h2>
+      <div id="productList">পণ্যের তালিকা লোড হচ্ছে...</div>
     </section>
 
-  </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- ORDERS -->
+    <section class="card">
+      <h2>কাস্টমারের অর্ডার</h2>
+      <p class="muted">
+        অর্ডার দেখার জন্য Supabase-এর orders টেবিলে
+        Admin-এর SELECT অনুমতি থাকতে হবে।
+      </p>
 
-  <script>
-    // ধাপ ২: এখানে নিজের Supabase তথ্য বসাও।
-    const SUPABASE_URL =
-      "https://hltvfckfbqegqsiimduw.supabase.co";
+      <button id="loadOrdersBtn" type="button">
+        অর্ডার দেখুন / Refresh করুন
+      </button>
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+      <div id="ordersMessage"
+           class="message hidden"
+           role="status"></div>
 
-    // এখানে Supabase-এ তৈরি করা Admin-এর ইমেইল বসাও।
-    const ADMIN_EMAIL = "YOUR_ADMIN_EMAIL_HERE";
+      <div id="orderList"></div>
+    </section>
 
-    const BUCKET_NAME = "product-images";
+  </section>
 
-    const loginSection = document.getElementById("loginSection");
-    const adminSection = document.getElementById("adminSection");
-    const productsSection = document.getElementById("productsSection");
+</main>
 
-    const loginMessage = document.getElementById("loginMessage");
-    const productMessage = document.getElementById("productMessage");
 
-    let supabaseClient = null;
-    let busy = false;
+<script>
+  // ==========================================
+  // BUYZEN SUPABASE CONFIGURATION
+  // ==========================================
 
-    function showMessage(element, message) {
-      element.textContent = message;
+  const SUPABASE_URL =
+    "https://hltvfckfbqegqsiimduw.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
+
+  const ADMIN_EMAIL = "bigvai311@gmail.com";
+
+  // ==========================================
+
+  const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  const $ = (id) => document.getElementById(id);
+
+  let currentUser = null;
+  let editingProductId = null;
+  let currentProducts = [];
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function showMessage(id, text, isError = false) {
+    const element = $(id);
+    element.textContent = text;
+    element.classList.remove("hidden", "error");
+
+    if (isError) {
+      element.classList.add("error");
+    }
+  }
+
+  function hideMessage(id) {
+    $(id).classList.add("hidden");
+  }
+
+  function showLogin() {
+    $("loginSection").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+    $("logoutBtn").classList.add("hidden");
+  }
+
+  function showDashboard(user) {
+    currentUser = user;
+
+    $("loginSection").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    $("logoutBtn").classList.remove("hidden");
+
+    $("adminInfo").textContent =
+      "Login করা আছে: " + user.email;
+
+    loadProducts();
+  }
+
+  function isAdminEmail(user) {
+    return (
+      user &&
+      user.email &&
+      user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+    );
+  }
+
+  async function checkSession() {
+    const { data, error } = await db.auth.getSession();
+
+    if (error) {
+      showLogin();
+      showMessage("loginMessage", error.message, true);
+      return;
     }
 
-    function setBusy(value) {
-      busy = value;
-      document.getElementById("loginButton").disabled = value;
-      document.getElementById("saveButton").disabled = value;
-      document.getElementById("logoutButton").disabled = value;
+    const user = data.session?.user;
+
+    if (!user) {
+      showLogin();
+      return;
     }
 
-    function isAdmin(user) {
-      return Boolean(
-        user &&
-        user.email &&
-        user.email.toLowerCase() === ADMIN_EMAIL.trim().toLowerCase()
+    if (!isAdminEmail(user)) {
+      await db.auth.signOut();
+      showLogin();
+
+      showMessage(
+        "loginMessage",
+        "এই ইমেইল Admin হিসেবে অনুমোদিত নয়।",
+        true
+      );
+
+      return;
+    }
+
+    showDashboard(user);
+  }
+
+
+  // LOGIN
+
+  $("loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = $("loginEmail").value.trim();
+    const password = $("loginPassword").value;
+
+    if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+      showMessage(
+        "loginMessage",
+        "Admin ইমেইল সঠিক নয়।",
+        true
+      );
+      return;
+    }
+
+    $("loginBtn").disabled = true;
+    $("loginBtn").textContent = "Login হচ্ছে...";
+
+    const { data, error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    $("loginBtn").disabled = false;
+    $("loginBtn").textContent = "Login করুন";
+
+    if (error) {
+      showMessage(
+        "loginMessage",
+        "Login হয়নি: " + error.message,
+        true
+      );
+      return;
+    }
+
+    if (!isAdminEmail(data.user)) {
+      await db.auth.signOut();
+
+      showMessage(
+        "loginMessage",
+        "এই অ্যাকাউন্ট Admin হিসেবে অনুমোদিত নয়।",
+        true
+      );
+      return;
+    }
+
+    showDashboard(data.user);
+
+    showMessage(
+      "dashboardMessage",
+      "Login সফল হয়েছে।"
+    );
+  });
+
+
+  // LOGOUT
+
+  $("logoutBtn").addEventListener("click", async () => {
+    const { error } = await db.auth.signOut();
+
+    if (error) {
+      showMessage("dashboardMessage", error.message, true);
+      return;
+    }
+
+    currentUser = null;
+    editingProductId = null;
+    $("productForm").reset();
+    showLogin();
+  });
+
+
+  // IMAGE UPLOAD
+
+  async function uploadProductImage(file) {
+    if (!file) return null;
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("JPG, PNG অথবা WebP ছবি ব্যবহার করুন।");
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("ছবির সাইজ ৫ MB-এর বেশি হতে পারবে না।");
+    }
+
+    const extension = file.type === "image/png"
+      ? "png"
+      : file.type === "image/webp"
+        ? "webp"
+        : "jpg";
+
+    const path =
+      currentUser.id + "/" +
+      Date.now() + "-" +
+      crypto.randomUUID() + "." +
+      extension;
+
+    const { error } = await db.storage
+      .from("product-images")
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (error) {
+      throw new Error(
+        "ছবি আপলোড হয়নি: " + error.message
       );
     }
 
-    function showLoggedOut() {
-      loginSection.classList.remove("hidden");
-      adminSection.classList.add("hidden");
-      productsSection.classList.add("hidden");
-    }
+    const { data } = db.storage
+      .from("product-images")
+      .getPublicUrl(path);
 
-    async function showLoggedIn(user) {
-      if (!isAdmin(user)) {
-        showLoggedOut();
-        showMessage(
-          loginMessage,
-          "এই ইমেইলটি Admin হিসেবে অনুমোদিত নয়।"
-        );
-        return;
-      }
+    return data.publicUrl;
+  }
 
-      loginSection.classList.add("hidden");
-      adminSection.classList.remove("hidden");
-      productsSection.classList.remove("hidden");
 
-      document.getElementById("signedInUser").textContent =
-        "লগইন করা হয়েছে: " + user.email;
+  // SAVE / EDIT PRODUCT
 
-      await loadProducts();
-    }
+  $("productForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    async function init() {
-      if (!window.supabase) {
-        showMessage(
-          loginMessage,
-          "Supabase লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।"
-        );
-        return;
-      }
-
-      if (
-        !SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_") ||
-        ADMIN_EMAIL === "YOUR_ADMIN_EMAIL_HERE" ||
-        !ADMIN_EMAIL.includes("@")
-      ) {
-        showMessage(
-          loginMessage,
-          "প্রথমে Supabase Publishable Key এবং Admin Email বসাও।"
-        );
-        return;
-      }
-
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY,
-        {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-          }
-        }
+    if (!currentUser || !isAdminEmail(currentUser)) {
+      showMessage(
+        "productMessage",
+        "প্রথমে Admin হিসেবে Login করুন।",
+        true
       );
-
-      const { data, error } =
-        await supabaseClient.auth.getSession();
-
-      if (error) {
-        showMessage(loginMessage, "লগইন তথ্য পড়া যায়নি: " + error.message);
-        return;
-      }
-
-      if (data.session) {
-        await showLoggedIn(data.session.user);
-      }
-
-      supabaseClient.auth.onAuthStateChange(
-        (event, session) => {
-          setTimeout(async () => {
-            if (session) {
-              await showLoggedIn(session.user);
-            } else {
-              showLoggedOut();
-            }
-          }, 0);
-        }
-      );
+      return;
     }
 
-    document.getElementById("loginForm")
-      .addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        if (!supabaseClient || busy) return;
-
-        const email =
-          document.getElementById("email").value.trim();
-
-        const password =
-          document.getElementById("password").value;
-
-        if (email.toLowerCase() !== ADMIN_EMAIL.trim().toLowerCase()) {
-          showMessage(loginMessage, "এই ইমেইলটি Admin ইমেইলের সঙ্গে মিলছে না।");
-          return;
-        }
-
-        setBusy(true);
-
-        try {
-          const { data, error } =
-            await supabaseClient.auth.signInWithPassword({
-              email,
-              password
-            });
-
-          if (error) throw error;
-
-          if (!isAdmin(data.user)) {
-            await supabaseClient.auth.signOut();
-            throw new Error("এই অ্যাকাউন্টটি Admin হিসেবে অনুমোদিত নয়।");
-          }
-
-          showMessage(loginMessage, "লগইন সফল হয়েছে।");
-
-          await showLoggedIn(data.user);
-
-        } catch (error) {
-          showMessage(loginMessage, "লগইন ব্যর্থ: " + error.message);
-        } finally {
-          setBusy(false);
-        }
-      });
-
-    document.getElementById("logoutButton")
-      .addEventListener("click", async function() {
-        if (!supabaseClient || busy) return;
-
-        setBusy(true);
-
-        try {
-          const { error } = await supabaseClient.auth.signOut();
-          if (error) throw error;
-
-          showLoggedOut();
-          showMessage(loginMessage, "লগআউট সফল হয়েছে।");
-
-        } catch (error) {
-          showMessage(productMessage, "লগআউট ব্যর্থ: " + error.message);
-        } finally {
-          setBusy(false);
-        }
-      });
-
-    document.getElementById("productForm")
-      .addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        if (!supabaseClient || busy) return;
-
-        const { data: authData, error: authError } =
-          await supabaseClient.auth.getUser();
-
-        if (authError || !isAdmin(authData.user)) {
-          showMessage(productMessage, "প্রথমে অনুমোদিত Admin হিসেবে লগইন করো।");
-          showLoggedOut();
-          return;
-        }
-
-        const name = document.getElementById("name").value.trim();
-        const price = Number(document.getElementById("price").value);
-        const category = document.getElementById("category").value;
-        const description =
-          document.getElementById("description").value.trim();
-        const stock = Number(document.getElementById("stock").value);
-        const file = document.getElementById("imageFile").files[0];
-
-        if (!name || !category || !file) {
-          showMessage(productMessage, "পণ্যের নাম, ক্যাটাগরি ও ছবি দিতে হবে।");
-          return;
-        }
-
-        if (!Number.isFinite(price) || price <= 0) {
-          showMessage(productMessage, "সঠিক দাম লিখো।");
-          return;
-        }
-
-        if (!Number.isInteger(stock) || stock < 0) {
-          showMessage(productMessage, "স্টকের পরিমাণ শূন্য বা তার বেশি পূর্ণসংখ্যা হতে হবে।");
-          return;
-        }
-
-        const allowedTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ];
-
-        if (!allowedTypes.includes(file.type)) {
-          showMessage(productMessage, "শুধু JPG, PNG অথবা WebP ছবি আপলোড করা যাবে।");
-          return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-          showMessage(productMessage, "ছবির আকার ৫ MB-এর কম হতে হবে।");
-          return;
-        }
-
-        setBusy(true);
-
-        let uploadedPath = null;
-
-        try {
-          showMessage(productMessage, "ছবি আপলোড হচ্ছে...");
-
-          const safeName = file.name
-            .normalize("NFKD")
-            .replace(/[^a-zA-Z0-9._-]/g, "-")
-            .slice(-100);
-
-          const filePath =
-            authData.user.id + "/" +
-            Date.now() + "-" + safeName;
-
-          const { data: uploadData, error: uploadError } =
-            await supabaseClient.storage
-              .from(BUCKET_NAME)
-              .upload(filePath, file, {
-                contentType: file.type,
-                upsert: false
-              });
-
-          if (uploadError) throw uploadError;
-
-          uploadedPath = uploadData.path;
-
-          const { data: publicData } =
-            supabaseClient.storage
-              .from(BUCKET_NAME)
-              .getPublicUrl(uploadedPath);
-
-          const imageUrl = publicData.publicUrl;
-
-          showMessage(productMessage, "ছবি আপলোড হয়েছে। পণ্য সংরক্ষণ হচ্ছে...");
-
-          const product = {
-            name,
-            description,
-            price,
-            image: imageUrl,
-            category,
-            stock,
-            is_active: true
-          };
-
-          const { error: insertError } =
-            await supabaseClient
-              .from("products")
-              .insert(product);
-
-          if (insertError) throw insertError;
-
-          showMessage(
-            productMessage,
-            "সফল! পণ্য Database-এ সংরক্ষণ হয়েছে।"
-          );
-
-          document.getElementById("productForm").reset();
-          document.getElementById("stock").value = "10";
-
-          await loadProducts();
-
-        } catch (error) {
-          showMessage(
-            productMessage,
-            "পণ্য সংরক্ষণ হয়নি: " + error.message +
-            (uploadedPath
-              ? " ছবিটি Storage-এ আপলোড হয়েছে; প্রয়োজনে পরে পরিষ্কার করতে হবে।"
-              : "")
-          );
-        } finally {
-          setBusy(false);
-        }
-      });
-
-    async function loadProducts() {
-      if (!supabaseClient) return;
-
-      const list = document.getElementById("productsList");
-      list.replaceChildren();
-
-      const { data, error } = await supabaseClient
-        .from("products")
-        .select("name, price, category, image, stock, is_active")
-        .order("name", { ascending: true })
-        .limit(100);
-
-      if (error) {
-        list.textContent =
-          "পণ্যের তালিকা লোড হয়নি: " + error.message;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        list.textContent = "এখনো কোনো পণ্য পাওয়া যায়নি।";
-        return;
-      }
-
-      data.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "product";
-
-        const title = document.createElement("h3");
-        title.textContent = product.name;
-
-        const price = document.createElement("p");
-        price.textContent = "দাম: ৳" + product.price;
-
-        const category = document.createElement("p");
-        category.textContent = "ক্যাটাগরি: " + product.category;
-
-        const stock = document.createElement("p");
-        stock.textContent = "স্টক: " + product.stock;
-
-        card.append(title, price, category, stock);
-
-        if (product.image) {
-          try {
-            const imageUrl = new URL(product.image);
-
-            if (imageUrl.protocol === "https:") {
-              const img = document.createElement("img");
-              img.src = imageUrl.href;
-              img.alt = product.name;
-              img.loading = "lazy";
-              card.appendChild(img);
-            }
-          } catch (_) {}
-        }
-
-        list.appendChild(card);
-      });
-    }
-
-    document.getElementById("refreshButton")
-      .addEventListener("click", loadProducts);
-
-    init();
-  </script>
-</body>
-</html>
+    const name = $("product
