@@ -8,21 +8,28 @@
   <title>Buyzen | প্রকৃতির আসল স্বাদ</title>
   <style>
     *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;color:#183b20;background:#fff}
-    .top{background:#176b2c;color:white;text-align:center;padding:10px;font-size:13px}
-    header{padding:15px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .logo{font-size:25px;font-weight:800;color:#176b2c}
+    :root{--green:#176b2c;--dark:#183b20;--cream:#f5f3d5}
+    html{scroll-behavior:smooth;scroll-padding-top:15px}
+    body{margin:0;padding-bottom:76px;font-family:Arial,"Noto Sans Bengali",sans-serif;color:var(--dark);background:#fff}
+    .top{background:var(--green);color:#fff;text-align:center;padding:10px;font-size:13px}
+    header{padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .logo{font-size:25px;font-weight:800;color:var(--green);text-decoration:none}
     .logo span{color:#d83222}
-    .icons{font-size:23px;color:#173b20}
+    .icon-btn{border:0;background:transparent;color:var(--dark);font-size:25px;cursor:pointer;padding:4px 8px}
+    .menu-wrap{position:relative}
+    .menu{display:none;position:absolute;z-index:20;top:42px;left:0;min-width:190px;background:#fff;border:1px solid #e6e6e0;border-radius:12px;box-shadow:0 8px 25px #0002;padding:7px}
+    .menu.open{display:block}
+    .menu a,.menu button{display:block;width:100%;text-align:left;padding:12px;border:0;background:#fff;color:var(--dark);text-decoration:none;font-size:15px;border-radius:8px;cursor:pointer}
+    .menu a:hover,.menu button:hover{background:#f0f5e7}
     .search{margin:0 14px 14px;background:#f2f3ef;border-radius:30px;padding:12px 16px}
     .search input{border:0;outline:0;background:transparent;width:90%;font-size:15px}
-    .hero{padding:28px 20px;background:linear-gradient(110deg,#f5f3d5,#dce9bd);display:flex;align-items:center;gap:10px;min-height:250px}
-    .hero .copy{flex:1}
+    .hero{position:relative;display:flex;align-items:center;min-height:230px;padding:28px 20px;background:linear-gradient(110deg,#f5f3d5,#dce9bd);overflow:hidden;border-radius:0 0 16px 16px}.hero.has-banner{background:#e8eddf center/cover no-repeat;min-height:260px}.hero.has-banner:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#102416b8,#10241620)}
+    .hero .copy{position:relative;z-index:1;flex:1;min-width:0}.hero.has-banner .copy{color:#fff}.hero.has-banner small,.hero.has-banner h1,.hero.has-banner p{color:#fff;text-shadow:0 1px 3px #0005}
     .hero small{font-size:15px;color:#28632d}
-    .hero h1{font-size:35px;line-height:1.3;color:#82451e;margin:8px 0}
+    .hero h1{font-size:clamp(25px,6vw,35px);line-height:1.3;color:#82451e;margin:8px 0}
     .hero p{font-size:14px;line-height:1.8;margin:6px 0 16px}
-    .hero img{width:44%;border-radius:48% 48% 15px 15px;object-fit:cover}
-    .btn{display:inline-block;background:#176b2c;color:white;padding:12px 18px;border:0;border-radius:25px;text-decoration:none;font-weight:bold;cursor:pointer}
+    .hero img{display:none}.hero .banner-empty{font-size:15px;line-height:1.8}.hero:not(.has-banner) .copy{max-width:700px;margin:auto;text-align:center}.hero:not(.has-banner) h1{color:#28632d}
+    .btn{display:inline-block;background:var(--green);color:white;padding:12px 18px;border:0;border-radius:25px;text-decoration:none;font-weight:bold;cursor:pointer}
     .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px 12px}
     .cat{text-align:center;font-size:13px;font-weight:bold}
     .cat img{width:75px;height:75px;object-fit:cover;border-radius:50%;background:#f8f1df}
@@ -34,219 +41,270 @@
     .product img{width:100%;height:145px;object-fit:cover}
     .info{padding:10px}
     .info h3{font-size:15px;margin:0 0 8px}
-    .price{font-size:19px;font-weight:bold;margin:8px 0;color:#183b20}
-    .buy{width:100%;border:0;border-radius:7px;background:#176b2c;color:white;padding:11px 4px;font-weight:bold;cursor:pointer}
+    .price{font-size:19px;font-weight:bold;margin:8px 0;color:var(--dark)}
+    .buy{width:100%;border:0;border-radius:7px;background:var(--green);color:white;padding:11px 4px;font-weight:bold;cursor:pointer}
     footer{text-align:center;padding:25px 12px;background:#f2f5ed;font-size:13px;line-height:2}
     .notice{margin:12px;padding:12px;background:#fff4d9;border-radius:8px;font-size:13px}
-    @media(min-width:700px){.hero{padding:55px 8%;}.hero h1{font-size:48px}.cats{grid-template-columns:repeat(6,1fr)}.services{grid-template-columns:repeat(4,1fr)}.products{grid-template-columns:repeat(4,1fr)}main{max-width:1100px;margin:auto}}
+    .empty{grid-column:1/-1;color:#666;padding:15px}
+    .bottom-nav{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-top:1px solid #e6e6e0;box-shadow:0 -3px 14px #0000000b;padding:7px 3px calc(7px + env(safe-area-inset-bottom))}
+    .bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;color:#667064;text-decoration:none;font-size:11px;padding:3px 0}
+    .bottom-nav a .nav-icon{font-size:20px;line-height:1.2}
+    .bottom-nav a.active{color:var(--green);font-weight:bold}
+    .panel{display:none;padding:18px 14px;min-height:45vh}
+    .panel.active{display:block}
+    .panel h2{margin:6px 0 15px}
+    .field{width:100%;padding:12px;border:1px solid #d9dfd5;border-radius:8px;font-size:15px;margin:7px 0 12px}
+    @media(min-width:700px){
+      body{padding-bottom:0}
+      .hero{padding:55px 8%}.hero h1{font-size:48px}
+      .services{grid-template-columns:repeat(4,1fr)}
+      .products{grid-template-columns:repeat(4,1fr)}
+      main,.page-width{max-width:1100px;margin:auto}
+      .bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(650px,100%);border:1px solid #e6e6e0;border-bottom:0;border-radius:14px 14px 0 0}
+    }
   </style>
 </head>
 <body>
   <div class="top">🚚 সারা বাংলাদেশে ডেলিভারি &nbsp; | &nbsp; ☎️ ২৪/৭ কাস্টমার সাপোর্ট</div>
   <header>
-    <div class="icons">☰</div>
-    <div class="logo">🌿 Buy<span>zen</span></div>
-    <div class="icons">🛒</div>
+    <div class="menu-wrap">
+      <button class="icon-btn" id="menuButton" aria-label="মেনু খুলুন" aria-expanded="false">☰</button>
+      <nav class="menu" id="menu">
+        <a href="#home" data-page="home">হোম</a>
+        <a href="#shop" data-page="shop">শপ</a>
+        <a href="#tracking" data-page="tracking">অর্ডার ট্র্যাকিং</a>
+        <a href="#about" data-page="about">About Us</a>
+        <button type="button" id="adminLogin">Admin Login ↗</button>
+      </nav>
+    </div>
+    <a class="logo" href="#home" data-page="home">🌿 Buy<span>zen</span></a>
+    <button class="icon-btn" id="cartButton" aria-label="কার্ট">🛒</button>
   </header>
-  <div class="search">🔍 <input id="search" placeholder="আপনার পছন্দের পণ্য খুঁজুন..." oninput="filterProducts()"></div>
-  <main>
-    <section class="hero">
+
+  <section class="search" id="searchWrap">🔍 <input id="search" placeholder="আপনার পছন্দের পণ্য খুঁজুন..." aria-label="পণ্য খুঁজুন"></section>
+
+  <main id="homePage" class="page-width">
+    <section class="hero" id="homeBanner" aria-label="হোমপেজ ব্যানার">
       <div class="copy">
-        <small>প্রকৃতির উপহার</small>
-        <h1>খাঁটি আখের গুড়</h1>
-        <p>খাঁটি স্বাদ, যত্নে বাছাই করা পণ্য।<br>সারা বাংলাদেশে ডেলিভারি।</p>
-        <a class="btn" href="#products">এখনই কিনুন →</a>
+        <small id="bannerEyebrow">BUY ZEN</small>
+        <h1 id="bannerTitle">আপনার ব্যানার এখানে দেখাবে</h1>
+        <p class="banner-empty" id="bannerSubtitle">অ্যাডমিন প্যানেল → Banners থেকে নিজের ব্যানার আপলোড করে Active করুন।</p>
+        <a class="btn" id="bannerButton" href="#shop" data-page="shop" hidden>এখনই কিনুন →</a>
       </div>
-      <img src="https://images.unsplash.com/photo-1604495772376-9657f0035eb5?auto=format&fit=crop&w=500&q=80" alt="প্রাকৃতিক খাবার">
     </section>
-    <section class="cats">
-      <div class="cat"><img src="https://images.unsplash.com/photo-1604495772376-9657f0035eb5?auto=format&fit=crop&w=200&q=80" alt=""><p>আখের গুড়</p></div>
-      <div class="cat"><img src="https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=200&q=80" alt=""><p>আখের চিনি</p></div>
-      <div class="cat"><img src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=200&q=80" alt=""><p>মধু</p></div>
-      <div class="cat"><img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=200&q=80" alt=""><p>সরিষার তেল</p></div>
-      <div class="cat"><img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=200&q=80" alt=""><p>নারিকেল</p></div>
-      <div class="cat"><img src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=200&q=80" alt=""><p>মাটির পণ্য</p></div>
-    </section>
+
     <section class="services">
-      <div>🌿<br>খাঁটি পণ্য</div>
-      <div>🚚<br>দ্রুত ডেলিভারি</div>
-      <div>🛡️<br>নিরাপদ অর্ডার</div>
-      <div>🎧<br>কাস্টমার সাপোর্ট</div>
+      <div>🌿<br>খাঁটি পণ্য</div><div>🚚<br>দ্রুত ডেলিভারি</div>
+      <div>🛡️<br>নিরাপদ অর্ডার</div><div>🎧<br>কাস্টমার সাপোর্ট</div>
     </section>
     <h2 id="products">⭐ আমাদের পণ্য</h2>
-    <section class="products" id="productList">
-      <article class="product" data-name="আখের গুড়">
-        <img src="https://images.unsplash.com/photo-1604495772376-9657f0035eb5?auto=format&fit=crop&w=500&q=80" alt="আখের গুড়">
-        <div class="info"><h3>আখের গুড় (১ কেজি)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ২০০</div><button class="buy" onclick="order('আখের গুড় (১ কেজি)',200)">অর্ডার করুন</button></div>
-      </article>
-      <article class="product" data-name="আখের চিনি">
-        <img src="https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=500&q=80" alt="চিনি">
-        <div class="info"><h3>আখের চিনি (১ কেজি)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ১৮০</div><button class="buy" onclick="order('আখের চিনি (১ কেজি)',180)">অর্ডার করুন</button></div>
-      </article>
-      <article class="product" data-name="প্রাকৃতিক মধু">
-        <img src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=500&q=80" alt="মধু">
-        <div class="info"><h3>প্রাকৃতিক মধু (৫০০ গ্রাম)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ৩৫০</div><button class="buy" onclick="order('প্রাকৃতিক মধু (৫০০ গ্রাম)',350)">অর্ডার করুন</button></div>
-      </article>
-      <article class="product" data-name="সরিষার তেল">
-        <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=500&q=80" alt="সরিষার তেল">
-        <div class="info"><h3>সরিষার তেল (১ লিটার)</h3><div>⭐ ⭐ ⭐ ⭐ ⭐</div><div class="price">৳ ২৮০</div><button class="buy" onclick="order('সরিষার তেল (১ লিটার)',280)">অর্ডার করুন</button></div>
-      </article>
-    </section>
-    <div class="notice">ℹ️ এখানে দেখানো দাম নমুনা। বিক্রির আগে সঠিক দাম, পণ্যের ছবি ও ডেলিভারি চার্জ ঠিক করে নেবে।</div>
+    <section class="products" id="homeProducts"><p class="empty">পণ্য লোড হচ্ছে…</p></section>
   </main>
+
+  <section id="shopPage" class="panel page-width">
+    <h2>🛍️ শপ — আমাদের পণ্য</h2>
+    <section class="products" id="shopProducts"><p class="empty">পণ্য লোড হচ্ছে…</p></section>
+  </section>
+
+  <section id="trackingPage" class="panel page-width">
+    <h2>📦 অর্ডার ট্র্যাকিং</h2>
+    <p>অর্ডারের অবস্থা জানতে অর্ডার নম্বর বা অর্ডারের সময় দেওয়া মোবাইল নম্বর ব্যবহার করুন।</p>
+    <input class="field" id="trackingInput" placeholder="অর্ডার নম্বর / মোবাইল নম্বর">
+    <button class="btn" id="trackingButton" type="button">ট্র্যাক করুন</button>
+    <p class="notice">ট্র্যাকিং চালু করতে নিরাপদ সার্ভার-সাইড যাচাই যুক্ত করতে হবে। আপাতত এখানে সরাসরি অর্ডারের ব্যক্তিগত তথ্য দেখানো হবে না।</p>
+    <p id="trackingMessage" role="status"></p>
+  </section>
+
+  <section id="aboutPage" class="panel page-width">
+    <h2>আমাদের সম্পর্কে</h2>
+    <p>Buyzen-এ আপনাকে স্বাগতম। আমরা খাঁটি ও যত্নে বাছাই করা পণ্য আপনার কাছে পৌঁছে দিতে চাই।</p>
+    <p>যোগাযোগ ও ডেলিভারি-সংক্রান্ত তথ্য এখানে ব্যবসার প্রকৃত তথ্য দিয়ে আপডেট করতে হবে।</p>
+  </section>
+
+  <section id="accountPage" class="panel page-width">
+    <h2>👤 অ্যাকাউন্ট</h2>
+    <p>অ্যাকাউন্ট, প্রোফাইল ও অর্ডার হিস্ট্রি সুবিধা চালু করতে নিরাপদ গ্রাহক লগইন ব্যবস্থা যুক্ত করতে হবে।</p>
+    <button class="btn" type="button" id="accountHelp">যোগাযোগের তথ্য</button>
+    <p id="accountMessage" role="status"></p>
+  </section>
+
   <footer>🌿 Buyzen — প্রকৃতির আসল স্বাদ<br>যোগাযোগ | ডেলিভারি নীতি | রিটার্ন নীতি<br>© Buyzen</footer>
+
+  <nav class="bottom-nav" aria-label="প্রধান নেভিগেশন">
+    <a href="#home" data-page="home" class="active"><span class="nav-icon">⌂</span><span>হোম</span></a>
+    <a href="#shop" data-page="shop"><span class="nav-icon">🛍</span><span>শপ</span></a>
+    <a href="#tracking" data-page="tracking"><span class="nav-icon">📦</span><span>ট্র্যাকিং</span></a>
+    <a href="#about" data-page="about"><span class="nav-icon">ⓘ</span><span>About Us</span></a>
+    <a href="#account" data-page="account"><span class="nav-icon">👤</span><span>অ্যাকাউন্ট</span></a>
+  </nav>
+
   <script>
-    function filterProducts(){
-      const q=document.getElementById('search').value.toLowerCase();
-      document.querySelectorAll('.product').forEach(p=>{
-        p.style.display=p.dataset.name.toLowerCase().includes(q)?'':'none';
-      });
-    }
-    function order(name, price) {
-  const customerName = prompt("আপনার নাম লিখুন:");
-  if (!customerName) return;
-
-  const phone = prompt("আপনার মোবাইল নম্বর লিখুন:");
-  if (!phone) return;
-
-  const address = prompt("আপনার সম্পূর্ণ ঠিকানা লিখুন:");
-  if (!address) return;
-
-  saveOrder(customerName, phone, address, name, price);
-}
     const SUPABASE_URL = "https://hltvfckfbqegqsiimduw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
-    async function saveOrder(customerName, phone, address, name, price) {
-  try {
-    const response = await fetch(SUPABASE_URL + "/rest/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY,
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify({
-        customer_name: customerName,
-        phone: phone,
-        address: address,
-        items: [{ name: name, price: Number(price), quantity: 1 }],
-        total_amount: Number(price),
-        status: "pending"
-      })
+    const SUPABASE_KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
+    let allProducts = [];
+    const menu = document.getElementById("menu");
+    const menuButton = document.getElementById("menuButton");
+
+    menuButton.addEventListener("click", () => {
+      const isOpen = menu.classList.toggle("open");
+      menuButton.setAttribute("aria-expanded", String(isOpen));
     });
 
-    if (!response.ok) throw new Error(await response.text());
+    document.getElementById("adminLogin").addEventListener("click", () => {
+      // GitHub Pages project path: opens the admin file beside index.html.
+      window.location.href = new URL("admin.html", window.location.href).href;
+    });
 
-    alert("আপনার অর্ডার গ্রহণ করা হয়েছে!");
-  } catch (error) {
-    console.error(error);
-    alert("অর্ডার জমা হয়নি। আবার চেষ্টা করুন।");
-  }
-}
-  </script>
-  <!-- Buyzen Live Products -->
-<section id="live-products" style="padding:24px 16px;max-width:1200px;margin:auto;">
-  <h2 style="margin-bottom:16px;">আমাদের পণ্য</h2>
-  <div id="live-category-list" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;"></div>
-  <div id="live-product-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;"></div>
-  <p id="live-product-message" style="color:#666;"></p>
-</section>
-
-<script>
-(async function () {
-  const URL = "https://hltvfckfbqegqsiimduw.supabase.co";
-  const KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
-
-  const productsBox = document.getElementById("live-product-list");
-  const categoriesBox = document.getElementById("live-category-list");
-  const message = document.getElementById("live-product-message");
-
-  try {
-    const response = await fetch(
-     URL + "/rest/v1/products?select=id,name,description,price,image_url,category,stock,is_active&is_active=eq.true&order=created_at.desc",
-      {
-        headers: {
-          apikey: KEY,
-          Authorization: "Bearer " + KEY
-        }
+    function goPage(page) {
+      const ids = {
+        home: "homePage", shop: "shopPage", tracking: "trackingPage",
+        about: "aboutPage", account: "accountPage"
+      };
+      Object.values(ids).forEach(id => document.getElementById(id).classList.remove("active"));
+      if (page === "home") {
+        document.getElementById("homePage").style.display = "block";
+        document.getElementById("searchWrap").style.display = "block";
+      } else {
+        document.getElementById("homePage").style.display = "none";
+        document.getElementById("searchWrap").style.display = page === "shop" ? "block" : "none";
+        document.getElementById(ids[page]).classList.add("active");
       }
-    );
-
-    if (!response.ok) throw new Error("পণ্য লোড হয়নি: " + await response.text());
-
-    const products = await response.json();
-
-    if (!products.length) {
-      message.textContent = "এখনো কোনো সক্রিয় পণ্য নেই।";
-      return;
-    }
-
-    const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
-
-    function showProducts(category = "সব") {
-      productsBox.replaceChildren();
-
-      const filtered = category === "সব"
-        ? products
-        : products.filter(p => p.category === category);
-
-      filtered.forEach(p => {
-        const card = document.createElement("article");
-        card.style.cssText = "border:1px solid #eee;border-radius:12px;overflow:hidden;background:white;padding-bottom:12px;";
-
-        if (p.image_url) {
-          const img = document.createElement("img");
-          img.src = p.image_url;
-          img.alt = p.name || "পণ্য";
-          img.loading = "lazy";
-          img.style.cssText = "width:100%;height:180px;object-fit:cover;";
-          card.appendChild(img);
-        }
-
-        const title = document.createElement("h3");
-        title.textContent = p.name || "";
-        title.style.cssText = "font-size:17px;margin:12px 10px 6px;";
-
-        const price = document.createElement("p");
-        price.textContent = "৳" + Number(p.price).toLocaleString("en-BD");
-        price.style.cssText = "font-weight:bold;margin:6px 10px;";
-
-        const description = document.createElement("p");
-        description.textContent = p.description || "";
-        description.style.cssText = "font-size:14px;margin:6px 10px;color:#555;";
-
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = "অর্ডার করুন";
-        button.style.cssText = "margin:8px 10px;padding:10px 14px;border:0;border-radius:8px;background:#176b45;color:white;cursor:pointer;";
-        button.onclick = () => {
-          const text = "আমি এই পণ্যটি অর্ডার করতে চাই: " + p.name + " — ৳" + p.price;
-          window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
-        };
-
-        card.append(title, price, description, button);
-        productsBox.appendChild(card);
+      document.querySelectorAll("[data-page]").forEach(el => {
+        if (el.closest(".bottom-nav")) el.classList.toggle("active", el.dataset.page === page);
       });
-
-      message.textContent = "";
+      menu.classList.remove("open");
+      menuButton.setAttribute("aria-expanded", "false");
+      if (page === "shop") renderProducts();
+      window.scrollTo({top: 0, behavior: "smooth"});
     }
 
-    ["সব", ...categories].forEach(category => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = category;
-      button.style.cssText = "padding:8px 14px;border:1px solid #ddd;border-radius:20px;background:#f5f8f5;cursor:pointer;";
-      button.onclick = () => showProducts(category);
-      categoriesBox.appendChild(button);
+    document.querySelectorAll("[data-page]").forEach(el => {
+      el.addEventListener("click", event => {
+        event.preventDefault();
+        goPage(el.dataset.page);
+        history.replaceState(null, "", "#" + el.dataset.page);
+      });
     });
 
-    showProducts();
-  } catch (error) {
-    message.textContent = "পণ্য দেখাতে সমস্যা হচ্ছে। " + error.message;
-    console.error("Buyzen product loading error:", error);
-  }
-})();
-</script>
+    document.getElementById("cartButton").addEventListener("click", () => {
+      alert("কার্ট সুবিধা এখনো যুক্ত করা হয়নি। আপাতত পণ্যের 'অর্ডার করুন' বাটন ব্যবহার করুন।");
+    });
+
+    document.getElementById("accountHelp").addEventListener("click", () => {
+      document.getElementById("accountMessage").textContent = "যোগাযোগের নম্বর ও অন্যান্য তথ্য Admin Panel/ওয়েবসাইটে যোগ করতে হবে।";
+    });
+
+    document.getElementById("trackingButton").addEventListener("click", () => {
+      const value = document.getElementById("trackingInput").value.trim();
+      document.getElementById("trackingMessage").textContent = value
+        ? "নিরাপদ অর্ডার-ট্র্যাকিং যাচাই এখনো যুক্ত করা হয়নি।"
+        : "অনুগ্রহ করে অর্ডার নম্বর বা মোবাইল নম্বর লিখুন।";
+    });
+
+    document.getElementById("search").addEventListener("input", renderProducts);
+
+    function makeProductCard(p) {
+      const card = document.createElement("article");
+      card.className = "product";
+      if (p.image_url) {
+        const img = document.createElement("img");
+        img.src = p.image_url;
+        img.alt = p.name || "পণ্য";
+        img.loading = "lazy";
+        card.appendChild(img);
+      }
+      const info = document.createElement("div");
+      info.className = "info";
+      const title = document.createElement("h3");
+      title.textContent = p.name || "পণ্য";
+      const price = document.createElement("div");
+      price.className = "price";
+      price.textContent = "৳ " + Number(p.price || 0).toLocaleString("bn-BD");
+      const buy = document.createElement("button");
+      buy.className = "buy";
+      buy.type = "button";
+      buy.textContent = "অর্ডার করুন";
+      buy.addEventListener("click", () => {
+        const text = "আমি এই পণ্যটি অর্ডার করতে চাই: " + (p.name || "পণ্য") + " — ৳" + p.price;
+        window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+      });
+      info.append(title, price, buy);
+      card.appendChild(info);
+      return card;
+    }
+
+    function renderProducts() {
+      const q = document.getElementById("search").value.trim().toLocaleLowerCase("bn");
+      const filtered = allProducts.filter(p => (p.name || "").toLocaleLowerCase("bn").includes(q));
+      ["homeProducts", "shopProducts"].forEach(id => {
+        const box = document.getElementById(id);
+        box.replaceChildren();
+        if (!filtered.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.textContent = allProducts.length ? "এই নামে কোনো পণ্য পাওয়া যায়নি।" : "এখনো কোনো সক্রিয় পণ্য নেই। Admin Panel থেকে পণ্য যোগ করুন।";
+          box.appendChild(empty);
+        } else {
+          filtered.forEach(p => box.appendChild(makeProductCard(p)));
+        }
+      });
+    }
+
+
+    async function loadBanner() {
+      const hero = document.getElementById("homeBanner");
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/rest/v1/site_banners?select=title,subtitle,image_url,button_text,button_url,is_active&is_active=eq.true&order=created_at.desc&limit=1",
+          {headers: {apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY}}
+        );
+        if (!response.ok) throw new Error("banner query failed");
+        const rows = await response.json();
+        if (!rows.length) return;
+        const b = rows[0];
+        hero.classList.add("has-banner");
+        if (b.image_url) hero.style.backgroundImage = "url(\"" + b.image_url.replace(/[\"\\]/g, "") + "\")";
+        document.getElementById("bannerTitle").textContent = b.title || "Buyzen";
+        document.getElementById("bannerSubtitle").textContent = b.subtitle || "";
+        const button = document.getElementById("bannerButton");
+        if (b.button_text) {
+          button.textContent = b.button_text;
+          button.hidden = false;
+          if (b.button_url) {
+            button.href = b.button_url;
+            button.removeAttribute("data-page");
+          }
+        }
+      } catch (error) {
+        console.warn("Buyzen banner not loaded. Check public SELECT policy for site_banners.", error);
+      }
+    }
+
+    async function loadProducts() {
+      const box = document.getElementById("homeProducts");
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/rest/v1/products?select=id,name,description,price,image_url,category,stock,is_active&is_active=eq.true&order=created_at.desc",
+          {headers: {apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY}}
+        );
+        if (!response.ok) throw new Error("পণ্য লোড হয়নি। Supabase-এর products টেবিল ও read policy পরীক্ষা করতে হবে।");
+        allProducts = await response.json();
+        renderProducts();
+      } catch (error) {
+        box.replaceChildren();
+        const msg = document.createElement("p");
+        msg.className = "empty";
+        msg.textContent = "পণ্য দেখাতে সমস্যা হচ্ছে। " + error.message;
+        box.appendChild(msg);
+        console.error("Buyzen product loading error:", error);
+      }
+    }
+
+    // Open the requested section when the URL has a supported hash.
+    const initialPage = location.hash.replace("#", "");
+    if (["shop", "tracking", "about", "account"].includes(initialPage)) goPage(initialPage);
+    loadProducts();
+    loadBanner();
+  </script>
 </body>
 </html>
