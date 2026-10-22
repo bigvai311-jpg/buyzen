@@ -359,6 +359,7 @@
       const phone = document.getElementById("orderPhone").value.trim();
       const address = document.getElementById("orderAddress").value.trim();
       const deliveryArea = document.querySelector('input[name="delivery_area"]:checked')?.value || "inside";
+
       if (!customerName || !phone || !address) {
         checkoutStatus.className = "checkout-status show error";
         checkoutStatus.textContent = "নাম, মোবাইল নম্বর ও সম্পূর্ণ ঠিকানা পূরণ করুন।";
@@ -370,49 +371,55 @@
         checkoutStatus.textContent = "সঠিক মোবাইল নম্বর লিখুন।";
         return;
       }
+
       const deliveryFee = deliveryArea === "inside" ? 100 : 120;
       const subtotal = Number(checkoutProduct.price || 0) * checkoutQty;
       const total = subtotal + deliveryFee;
-      // Delivery details are kept in the existing JSONB "items" column,
-      // so no new database columns are required for this change.
-      const items = [{
-        product_id: checkoutProduct.id,
-        name: checkoutProduct.name || "পণ্য",
-        price: Number(checkoutProduct.price || 0),
-        quantity: checkoutQty,
-        delivery_area: deliveryArea,
-        delivery_fee: deliveryFee
-      }];
       const orderRecord = {
         customer_name: customerName,
-        phone,
-        address,
-        items,
+        phone: phone,
+        address: address,
+        items: [{
+          product_id: checkoutProduct.id ?? null,
+          name: checkoutProduct.name || "পণ্য",
+          price: Number(checkoutProduct.price || 0),
+          quantity: checkoutQty,
+          delivery_area: deliveryArea,
+          delivery_charge: deliveryFee
+        }],
         total_amount: total,
         status: "pending"
       };
+
       submit.disabled = true;
       submit.textContent = "অর্ডার জমা হচ্ছে…";
       checkoutStatus.className = "checkout-status";
+      checkoutStatus.textContent = "";
       try {
-        const response = await fetch(SUPABASE_URL + "/rest/v1/orders?select=id,customer_name,phone,address,items,total_amount,status,created_at", {
+        // return=minimal avoids requiring public SELECT permission just to confirm an INSERT.
+        const response = await fetch(SUPABASE_URL + "/rest/v1/orders", {
           method: "POST",
           headers: {
             apikey: SUPABASE_KEY,
             Authorization: "Bearer " + SUPABASE_KEY,
             "Content-Type": "application/json",
-            Prefer: "return=representation"
+            Prefer: "return=minimal"
           },
           body: JSON.stringify(orderRecord)
         });
-        const result = await response.json().catch(() => []);
+
         if (!response.ok) {
-          const detail = result?.message || result?.details || result?.hint || "ডেটাবেসে অর্ডার সংরক্ষণ হয়নি।";
-          throw new Error(detail);
+          let result = {};
+          try { result = await response.json(); } catch (_) {}
+          const serverMessage = result.message || result.details || result.hint || ("HTTP " + response.status);
+          if (response.status === 401 || response.status === 403 || /row-level security|policy/i.test(serverMessage)) {
+            throw new Error("Supabase orders টেবিলে INSERT RLS policy অর্ডারটি অনুমোদন করেনি। index.html কোড পাঠানো হয়েছে, কিন্তু Supabase SQL policy ঠিক করতে হবে। বিস্তারিত: " + serverMessage);
+          }
+          throw new Error(serverMessage);
         }
-        const saved = Array.isArray(result) ? result[0] : result;
+
         checkoutStatus.className = "checkout-status show success";
-        checkoutStatus.textContent = "অর্ডার সফলভাবে জমা হয়েছে! অর্ডার নম্বর: #" + (saved?.id ?? "—") + "। চাইলে নিচের WhatsApp বোতামে যোগাযোগ করুন।";
+        checkoutStatus.textContent = "অর্ডার সফলভাবে জমা হয়েছে! আপনার অর্ডারটি গ্রহণ করা হয়েছে। WhatsApp-এ চাইলে অর্ডারের তথ্য পাঠাতে পারেন।";
         submit.textContent = "অর্ডার জমা হয়েছে ✓";
         const whatsapp = document.createElement("a");
         whatsapp.className = "checkout-submit";
@@ -422,14 +429,14 @@
         whatsapp.style.marginTop = "10px";
         whatsapp.style.background = "linear-gradient(135deg,#128c4a,#25b968)";
         whatsapp.textContent = "WhatsApp-এ যোগাযোগ করুন";
-        const message = `Buyzen অর্ডার #${saved?.id ?? ""}\nনাম: ${customerName}\nফোন: ${phone}\nঠিকানা: ${address}\nপণ্য: ${checkoutProduct.name}\nপরিমাণ: ${checkoutQty}\nপণ্যের মূল্য: ${moneyBD(subtotal)}\nডেলিভারি: ${moneyBD(deliveryFee)} (${deliveryArea === "inside" ? "ঢাকার ভিতরে" : "ঢাকার বাইরে"})\nমোট: ${moneyBD(total)}`;
+        const message = `Buyzen অর্ডার\nনাম: ${customerName}\nফোন: ${phone}\nঠিকানা: ${address}\nপণ্য: ${checkoutProduct.name || "পণ্য"}\nপরিমাণ: ${checkoutQty}\nপণ্যের মূল্য: ${moneyBD(subtotal)}\nডেলিভারি: ${moneyBD(deliveryFee)} (${deliveryArea === "inside" ? "ঢাকার ভিতরে" : "ঢাকার বাইরে"})\nমোট: ${moneyBD(total)}`;
         whatsapp.href = "https://wa.me/?text=" + encodeURIComponent(message);
         whatsapp.target = "_blank";
         whatsapp.rel = "noopener noreferrer";
         document.getElementById("checkoutSubmit").after(whatsapp);
       } catch (error) {
         checkoutStatus.className = "checkout-status show error";
-        checkoutStatus.textContent = "অর্ডার জমা হয়নি: " + error.message + "। Supabase-এর orders INSERT policy, কলামের নাম ও API key পরীক্ষা করুন।";
+        checkoutStatus.textContent = "অর্ডার জমা হয়নি: " + (error?.message || String(error));
         submit.disabled = false;
         submit.textContent = "আবার চেষ্টা করুন";
       }
