@@ -373,11 +373,15 @@
       const deliveryFee = deliveryArea === "inside" ? 100 : 120;
       const subtotal = Number(checkoutProduct.price || 0) * checkoutQty;
       const total = subtotal + deliveryFee;
+      // Delivery details are kept in the existing JSONB "items" column,
+      // so no new database columns are required for this change.
       const items = [{
         product_id: checkoutProduct.id,
         name: checkoutProduct.name || "পণ্য",
         price: Number(checkoutProduct.price || 0),
-        quantity: checkoutQty
+        quantity: checkoutQty,
+        delivery_area: deliveryArea,
+        delivery_fee: deliveryFee
       }];
       const orderRecord = {
         customer_name: customerName,
@@ -425,7 +429,7 @@
         document.getElementById("checkoutSubmit").after(whatsapp);
       } catch (error) {
         checkoutStatus.className = "checkout-status show error";
-        checkoutStatus.textContent = "অর্ডার জমা হয়নি: " + error.message + "। Supabase orders টেবিলের INSERT permission পরীক্ষা করতে হবে।";
+        checkoutStatus.textContent = "অর্ডার জমা হয়নি: " + error.message + "। Supabase-এর orders INSERT policy, কলামের নাম ও API key পরীক্ষা করুন।";
         submit.disabled = false;
         submit.textContent = "আবার চেষ্টা করুন";
       }
