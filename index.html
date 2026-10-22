@@ -164,7 +164,7 @@ const SUPABASE_KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
 
   try {
     const response = await fetch(
-      URL + "/rest/v1/products?select=id,name,description,price,image_url,category,stock,is_active&is_active=eq.true&order=created_at.desc",
+     URL + "/rest/v1/products?select=id,name,description,price,image_url,category,stock,is_active&is_active=eq.true&order=created_at.desc",
       {
         headers: {
           apikey: KEY,
