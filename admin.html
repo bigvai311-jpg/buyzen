@@ -64,8 +64,9 @@ td select{padding:7px;border:1px solid #ccd8cf;border-radius:7px;max-width:150px
       <button class="nav" data-page="incomplete">🕒 Incomplete Orders</button><button class="nav" data-page="products">🛍️ Products</button>
       <button class="nav" data-page="categories">🗂️ Categories</button><button class="nav" data-page="reviews">⭐ Reviews</button>
       <button class="nav" data-page="banners">🖼️ Banners</button><button class="nav" data-page="pages">📄 Pages</button>
-      <button class="nav" data-page="features">✨ Featured Products</button><button class="nav" data-page="logistics">🚚 Logistics & Tracking</button>
-      <button class="nav" data-page="analytics">📈 Analytics</button><button class="nav" data-page="settings">⚙️ Settings & SEO</button>
+      <button class="nav" data-page="features">✨ Featured Products</button><button class="nav" data-page="logistics">🚚 Tracking & Logistics</button>
+      <button class="nav" data-page="team">👥 Team</button><button class="nav" data-page="appearance">🎨 Appearance</button>
+      <button class="nav" data-page="seo">🔎 SEO</button><button class="nav" data-page="settings">⚙️ General Settings</button>
     </div><hr style="border-color:#35674c"><button id="logoutButton" class="nav" type="button">↩ Logout</button>
   </aside>
   <section class="main">
@@ -100,7 +101,7 @@ function setLoggedIn(user) {
 function setPage(page) {
   activePage = page;
   document.querySelectorAll('.nav[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === page));
-  const titles = {dashboard:'Dashboard',orders:'Orders',incomplete:'Incomplete Orders',products:'Products',categories:'Categories',reviews:'Reviews',banners:'Banners',pages:'Pages',features:'Featured Products',logistics:'Logistics & Tracking',analytics:'Analytics',settings:'Settings & SEO'};
+  const titles = {dashboard:'Dashboard',orders:'Orders',incomplete:'Incomplete Orders',products:'Products',categories:'Categories',reviews:'Reviews',banners:'Banners',pages:'Pages',features:'Featured Products',logistics:'Tracking & Logistics',team:'Team',appearance:'Appearance',seo:'SEO',analytics:'Analytics',settings:'General Settings'};
   $('pageTitle').textContent = titles[page] || 'Dashboard';
   renderPage();
 }
@@ -154,26 +155,104 @@ function productForm(p = null) {
 function productsPage() {
   return `${productForm()}<section class="panel"><div class="panel-head"><h2>পণ্যের তালিকা (${productsCache.length})</h2><button class="btn secondary small" data-action="refresh" type="button">রিফ্রেশ</button></div>${productsCache.length ? productsCache.map(p => `<div class="product-row">${p.image_url ? `<img src="${esc(p.image_url)}" alt="">` : '<div>🛍️</div>'}<div><b>${esc(p.name)}</b><div>${money(p.price)} · স্টক ${esc(p.stock)} · ${p.is_active ? '<span class="pill">সক্রিয়</span>' : '<span class="pill off">লুকানো</span>'}</div><div class="muted">${esc(p.category || 'ক্যাটাগরি নেই')}</div></div><div class="product-actions"><button class="btn secondary small" data-edit-product="${esc(p.id)}" type="button">এডিট</button><button class="btn danger small" data-delete-product="${esc(p.id)}" type="button">ডিলিট</button></div></div>`).join('') : '<div class="empty">এখনো পণ্য নেই।</div>'}</section>`;
 }
+const CMS_TABLES = {
+  banners: 'site_banners',
+  pages: 'site_pages',
+  settings: 'site_settings',
+  appearance: 'site_settings',
+  seo: 'site_settings',
+  team: 'site_team',
+  reviews: 'site_reviews'
+};
+const SETTING_GROUPS = {
+  settings: [
+    ['site_name','ওয়েবসাইটের নাম'],['contact_phone','যোগাযোগের ফোন'],['whatsapp_number','WhatsApp নম্বর'],
+    ['contact_email','ইমেইল'],['facebook_url','Facebook URL'],['instagram_url','Instagram URL'],
+    ['tiktok_url','TikTok URL'],['youtube_url','YouTube URL'],['delivery_info','ডেলিভারি তথ্য']
+  ],
+  appearance: [
+    ['theme_color','প্রধান রং (HEX)'],['logo_url','Logo image URL'],['hero_title','কভার শিরোনাম'],
+    ['hero_subtitle','কভার সাবটাইটেল'],['hero_button_text','কভার বাটনের লেখা'],['hero_button_url','কভার বাটনের লিংক'],
+    ['hero_image_url','কভার ব্যানার image URL']
+  ],
+  seo: [
+    ['seo_title','SEO Title'],['seo_description','Meta Description'],['seo_keywords','Keywords'],
+    ['og_image_url','Social share image URL'],['robots_text','Robots.txt নির্দেশনা']
+  ]
+};
+function cmsPage(page) {
+  if (page === 'banners') return `<section class="panel"><h2>ব্যানার পরিচালনা</h2>
+    <p class="muted">ছবি আপলোড করলে Storage-এর ${esc(BUCKET)} bucket ব্যবহার হবে। SQL setup চালানো এবং bucket policy ঠিক করা লাগবে।</p>
+    <form id="bannerForm"><div class="form-grid">
+    <label>ব্যানারের নাম<input class="field" name="title" required></label>
+    <label>ছবির ফাইল<input class="field" name="image" type="file" accept="image/*" required></label>
+    <label>বাটনের লেখা<input class="field" name="button_text" value="এখনই কিনুন"></label>
+    <label>বাটনের লিংক<input class="field" name="button_url" value="#products"></label>
+    <label class="full">বর্ণনা<input class="field" name="subtitle"></label>
+    <label class="full"><input type="checkbox" name="is_active" checked style="width:auto"> প্রকাশিত / সক্রিয়</label>
+    </div><button class="btn" type="submit">ব্যানার আপলোড ও সংরক্ষণ</button></form></section>
+    <section class="panel"><h2>সংরক্ষিত ব্যানার</h2><div id="bannerList"><p class="muted">ব্যানার লোড করতে নিচের রিফ্রেশ চাপুন।</p></div><button class="btn secondary" data-action="load-banners" type="button">ব্যানার রিফ্রেশ</button></section>`;
+  if (page === 'pages') return `<section class="panel"><h2>পেজ সম্পাদনা</h2>
+    <form id="pageForm"><div class="form-grid">
+    <label>পেজের নাম<select class="field" name="slug"><option value="about-us">About Us</option><option value="contact-us">Contact Us</option><option value="returns-refunds">Returns & Refunds</option><option value="shipping-info">Shipping Information</option><option value="privacy-policy">Privacy Policy</option><option value="terms">Terms & Conditions</option></select></label>
+    <label>পেজের শিরোনাম<input class="field" name="title" required></label>
+    <label class="full">পেজের লেখা<textarea class="field" name="content" rows="7" required></textarea></label>
+    <label class="full"><input type="checkbox" name="is_published" checked style="width:auto"> প্রকাশিত</label>
+    </div><button class="btn" type="submit">পেজ সংরক্ষণ</button></form></section>
+    <section class="panel"><h2>সংরক্ষিত পেজ</h2><div id="pageList"></div><button class="btn secondary" data-action="load-pages" type="button">পেজ রিফ্রেশ</button></section>`;
+  if (['settings','appearance','seo'].includes(page)) {
+    const labels = {settings:'General Settings ও Social Media',appearance:'Theme Customizer / Appearance',seo:'SEO Settings'};
+    const fields = SETTING_GROUPS[page];
+    return `<section class="panel"><h2>${labels[page]}</h2><p class="muted">Save করলে সেটিংস Supabase-এর site_settings টেবিলে সংরক্ষিত হবে। হোমপেজে এগুলো দেখাতে index.html-কে পরে এই সেটিংস পড়ার সঙ্গে যুক্ত করতে হবে।</p>
+      <form id="settingsForm" data-group="${page}"><div class="form-grid">${fields.map(([key,label]) => `<label>${esc(label)}<input class="field" name="${esc(key)}" data-setting-key="${esc(key)}" placeholder="${esc(label)}"></label>`).join('')}</div><button class="btn" type="submit">সেটিংস সংরক্ষণ</button><button class="btn secondary" type="button" data-action="load-settings" data-group="${page}">বর্তমান সেটিংস লোড</button></form></section>`;
+  }
+  if (page === 'team') return `<section class="panel"><h2>টিম মেম্বার যোগ করুন</h2><form id="teamForm"><div class="form-grid">
+    <label>নাম<input class="field" name="name" required></label><label>পদবি<input class="field" name="role"></label>
+    <label>ছবির URL<input class="field" name="image_url" type="url"></label><label>সোশ্যাল লিংক<input class="field" name="social_url" type="url"></label>
+    <label class="full">পরিচিতি<textarea class="field" name="bio"></textarea></label></div><button class="btn" type="submit">টিম মেম্বার সংরক্ষণ</button></form></section><section class="panel"><h2>টিম তালিকা</h2><div id="teamList"></div><button class="btn secondary" data-action="load-team" type="button">রিফ্রেশ</button></section>`;
+  if (page === 'reviews') return `<section class="panel"><h2>গ্রাহক রিভিউ</h2><p class="muted">রিভিউ টেবিল সেটআপের পর এখানে রিভিউ ও প্রকাশের অবস্থা দেখাবে।</p><div id="reviewList"></div><button class="btn secondary" data-action="load-reviews" type="button">রিভিউ লোড</button></section>`;
+  return '<section class="panel"><h2>এই বিভাগ</h2><p class="muted">সেটআপ সম্পন্ন হলে এখানে তথ্য দেখাবে।</p></section>';
+}
+async function loadCmsList(page) {
+  const table = CMS_TABLES[page];
+  if (!table) return;
+  const targetId = ({banners:'bannerList',pages:'pageList',team:'teamList',reviews:'reviewList'})[page];
+  if (!targetId) return;
+  const target = $(targetId);
+  target.textContent = 'লোড হচ্ছে…';
+  const {data,error} = await db.from(table).select('*').order('created_at',{ascending:false});
+  if (error) { target.textContent = 'লোড হয়নি: ' + error.message + ' — SQL setup চালানো হয়েছে কি না দেখুন।'; return; }
+  if (!data?.length) { target.textContent = 'এখনো কোনো তথ্য সংরক্ষিত নেই।'; return; }
+  if (page === 'banners') target.innerHTML = data.map(x => `<div class="product-row">${x.image_url ? `<img src="${esc(x.image_url)}" alt="">` : '🖼️'}<div><b>${esc(x.title)}</b><div class="muted">${esc(x.subtitle || '')}</div><span class="pill ${x.is_active ? '' : 'off'}">${x.is_active ? 'সক্রিয়' : 'লুকানো'}</span></div><div class="product-actions"><button class="btn danger small" data-delete-cms="${esc(x.id)}" data-table="site_banners">ডিলিট</button></div></div>`).join('');
+  else if (page === 'pages') target.innerHTML = data.map(x => `<div class="product-row"><div>📄</div><div><b>${esc(x.title)}</b><div class="muted">${esc(x.slug)} · ${x.is_published ? 'প্রকাশিত' : 'খসড়া'}</div><p>${esc((x.content||'').slice(0,180))}</p></div><div class="product-actions"><button class="btn secondary small" data-edit-page="${esc(x.id)}">এডিট</button><button class="btn danger small" data-delete-cms="${esc(x.id)}" data-table="site_pages">ডিলিট</button></div></div>`).join('');
+  else if (page === 'team') target.innerHTML = data.map(x => `<div class="product-row"><div>👤</div><div><b>${esc(x.name)}</b><div class="muted">${esc(x.role||'')}</div></div><button class="btn danger small" data-delete-cms="${esc(x.id)}" data-table="site_team">ডিলিট</button></div>`).join('');
+  else target.innerHTML = data.map(x => `<div class="product-row"><div>⭐</div><div><b>${esc(x.customer_name||'গ্রাহক')}</b><div>${esc(x.review_text||'')}</div><span class="pill ${x.is_published ? '' : 'off'}">${x.is_published?'প্রকাশিত':'অপ্রকাশিত'}</span></div></div>`).join('');
+}
+async function loadSettings(group) {
+  const {data,error} = await db.from('site_settings').select('key,value');
+  if (error) { message('সেটিংস লোড হয়নি: ' + error.message + ' — SQL setup চালানো হয়েছে কি না দেখুন।'); return; }
+  const form = $('settingsForm');
+  if (!form) return;
+  const map = Object.fromEntries((data||[]).map(x => [x.key,x.value]));
+  form.querySelectorAll('[data-setting-key]').forEach(input => input.value = map[input.dataset.settingKey] || '');
+  message('বর্তমান সেটিংস লোড হয়েছে।');
+}
 function simplePage(page) {
+  if (['banners','pages','settings','appearance','seo','team','reviews'].includes(page)) return cmsPage(page);
   const notes = {
-    categories:'Categories products টেবিলের category কলাম থেকে নেওয়া হয়। নতুন ক্যাটাগরি যোগ করতে পণ্য ফর্মে নাম ব্যবহার করুন।',
-    reviews:'Reviews পরিচালনার জন্য আলাদা ডেটাবেজ টেবিল নিশ্চিত করা হয়নি।',
-    banners:'এই সংস্করণে banner data সংরক্ষণের ব্যবস্থা নেই; এখানে পরিবর্তন করলে হোমপেজের banner বদলাবে না।',
-    pages:'স্ট্যাটিক পেজ পরিবর্তনের জন্য আলাদা content-management ব্যবস্থা বা website code update দরকার।',
-    features:'Featured পণ্যের আলাদা flag/field নেই। বর্তমানে সক্রিয় পণ্যগুলো দেখানো হচ্ছে।',
+    categories:'Categories products টেবিলের category কলাম থেকে নেওয়া হয়। নতুন ক্যাটাগরি পণ্য ফর্মে যোগ করুন।',
+    features:'সক্রিয় পণ্য এখানে দেখানো হচ্ছে। Featured selector এখনো আলাদা ডেটাবেজ field ব্যবহার করে না.',
     logistics:'অর্ডারের status পরিবর্তন করে shipped/delivered চিহ্নিত করা যায়। কুরিয়ার API এখনো সংযুক্ত নয়।',
-    analytics:'এখানে Supabase orders/products থেকে পাওয়া হিসাব দেখানো হচ্ছে।',
-    settings:'এই সংস্করণে SEO ও Appearance পরিবর্তনের ফর্ম নেই; শুধু এই তথ্য জানানো হচ্ছে।'
+    analytics:'ভিজিটর গণনার জন্য index.html-এ visit tracking যোগ করতে হবে এবং site_visits টেবিল সেটআপ করতে হবে.'
   };
   if (page === 'categories') {
     const cats = [...new Set(productsCache.map(p => p.category).filter(Boolean))];
     return `<section class="panel"><h2>ক্যাটাগরি</h2><p class="muted">${esc(notes.categories)}</p>${cats.length ? cats.map(c => `<p>🗂️ ${esc(c)} <span class="muted">(${productsCache.filter(p => p.category === c).length} পণ্য)</span></p>`).join('') : '<div class="empty">ক্যাটাগরি নেই।</div>'}</section>`;
   }
   if (page === 'features') return `<section class="panel"><h2>Featured Products</h2><p class="muted">${esc(notes.features)}</p>${productsCache.filter(p => p.is_active).map(p => `<p>⭐ ${esc(p.name)} — ${money(p.price)}</p>`).join('') || '<div class="empty">সক্রিয় পণ্য নেই।</div>'}</section>`;
-  if (page === 'logistics') return `<section class="panel"><h2>Logistics & Tracking</h2><p class="muted">${esc(notes.logistics)}</p>${ordersTable(ordersCache,true)}</section>`;
-  if (page === 'analytics') return `<div class="grid">${statCard('মোট অর্ডার',ordersCache.length)}${statCard('মোট পণ্য',productsCache.length)}${statCard('সক্রিয় পণ্য',productsCache.filter(p => p.is_active).length)}${statCard('Delivered অর্ডার',ordersCache.filter(o => String(o.status).toLowerCase() === 'delivered').length)}</div><section class="panel"><h2>Analytics</h2><p class="muted">${esc(notes.analytics)}</p></section>`;
-  const headings = {reviews:'Reviews',banners:'Banners',pages:'Pages',settings:'Settings & SEO'};
-  return `<section class="panel"><h2>${esc(headings[page] || 'বিভাগ')}</h2><p class="muted">${esc(notes[page] || 'এই বিভাগটি পরে কনফিগার করা যাবে।')}</p></section>`;
+  if (page === 'logistics') return `<section class="panel"><h2>Tracking & Logistics</h2><p class="muted">${esc(notes.logistics)}</p>${ordersTable(ordersCache,true)}</section>`;
+  if (page === 'analytics') return `<div class="grid">${statCard('মোট অর্ডার',ordersCache.length)}${statCard('মোট পণ্য',productsCache.length)}${statCard('সক্রিয় পণ্য',productsCache.filter(p => p.is_active).length)}${statCard('Delivered অর্ডার',ordersCache.filter(o => String(o.status).toLowerCase() === 'delivered').length)}</div><section class="panel"><h2>Visitor Analytics</h2><p class="muted">${esc(notes.analytics)}</p><div id="visitorStats">ভিজিটর হিসাব দেখাতে site_visits টেবিল এবং হোমপেজ tracking setup লাগবে।</div><button class="btn secondary" data-action="load-visitors" type="button">ভিজিটর রিফ্রেশ</button></section>`;
+  return '<section class="panel"><h2>এই বিভাগ</h2><p class="muted">তথ্য লোড হয়নি।</p></section>';
 }
 function renderPage() {
   if (!currentUser) return;
@@ -184,6 +263,8 @@ function renderPage() {
   else if (activePage === 'incomplete') root.innerHTML = `<section class="panel"><h2>Incomplete Orders</h2><p class="muted">আলাদা incomplete/checkout field নিশ্চিত নয়; pending অর্ডারগুলো দেখানো হচ্ছে।</p>${ordersTable(ordersCache.filter(o => ['pending','incomplete','abandoned'].includes(String(o.status || 'pending').toLowerCase())),true)}</section>`;
   else if (activePage === 'products') root.innerHTML = productsPage();
   else root.innerHTML = simplePage(activePage);
+  if (['banners','pages','team','reviews'].includes(activePage)) loadCmsList(activePage);
+  if (['settings','appearance','seo'].includes(activePage)) loadSettings(activePage);
 }
 async function uploadImage(file) {
   if (!file || !file.name) return null;
@@ -291,6 +372,81 @@ $('pageContent').addEventListener('submit', async e => {
     message('পণ্য সংরক্ষণ হয়নি: ' + (err?.message || String(err)));
   } finally {
     save.disabled = false;
+  }
+});
+
+
+$('pageContent').addEventListener('submit', async e => {
+  const form = e.target;
+  if (!['bannerForm','pageForm','settingsForm','teamForm'].includes(form.id)) return;
+  e.preventDefault();
+  const button = form.querySelector('button[type="submit"]');
+  if (button) button.disabled = true;
+  try {
+    const fd = new FormData(form);
+    if (form.id === 'bannerForm') {
+      const file = fd.get('image');
+      const imageUrl = await uploadImage(file);
+      const record = {title:String(fd.get('title')||'').trim(), image_url:imageUrl,
+        subtitle:String(fd.get('subtitle')||''), button_text:String(fd.get('button_text')||''),
+        button_url:String(fd.get('button_url')||''), is_active:fd.get('is_active')==='on'};
+      const {error} = await db.from('site_banners').insert(record);
+      if (error) throw error;
+      message('ব্যানার সংরক্ষিত হয়েছে। হোমপেজে দেখাতে index.html-কে site_banners থেকে ব্যানার পড়ার সঙ্গে যুক্ত করতে হবে।');
+      form.reset(); await loadCmsList('banners');
+    } else if (form.id === 'pageForm') {
+      const record = {slug:String(fd.get('slug')), title:String(fd.get('title')||'').trim(), content:String(fd.get('content')||''), is_published:fd.get('is_published')==='on'};
+      const {error} = await db.from('site_pages').upsert(record,{onConflict:'slug'});
+      if (error) throw error;
+      message('পেজ সংরক্ষিত হয়েছে। হোমপেজে প্রকাশ করতে পেজ-rendering সংযোগও লাগবে.');
+      form.reset(); await loadCmsList('pages');
+    } else if (form.id === 'settingsForm') {
+      const records = [...form.querySelectorAll('[data-setting-key]')].map(input => ({key:input.dataset.settingKey,value:input.value.trim(),group:form.dataset.group}));
+      const {error} = await db.from('site_settings').upsert(records,{onConflict:'key'});
+      if (error) throw error;
+      message('সেটিংস সংরক্ষিত হয়েছে। হোমপেজে প্রয়োগ করতে index.html-কে এই সেটিংস পড়তে যুক্ত করতে হবে।');
+    } else if (form.id === 'teamForm') {
+      const record = {name:String(fd.get('name')||'').trim(),role:String(fd.get('role')||''),image_url:String(fd.get('image_url')||''),social_url:String(fd.get('social_url')||''),bio:String(fd.get('bio')||'')};
+      const {error} = await db.from('site_team').insert(record);
+      if (error) throw error;
+      message('টিম মেম্বার সংরক্ষিত হয়েছে।'); form.reset(); await loadCmsList('team');
+    }
+  } catch (err) {
+    message('সংরক্ষণ হয়নি: ' + (err?.message || String(err)) + '। SQL setup এবং Supabase Storage bucket/policy পরীক্ষা করুন।');
+  } finally { if (button) button.disabled = false; }
+});
+
+$('pageContent').addEventListener('click', async e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.action === 'load-banners') return loadCmsList('banners');
+  if (b.dataset.action === 'load-pages') return loadCmsList('pages');
+  if (b.dataset.action === 'load-team') return loadCmsList('team');
+  if (b.dataset.action === 'load-reviews') return loadCmsList('reviews');
+  if (b.dataset.action === 'load-settings') return loadSettings(b.dataset.group);
+  if (b.dataset.action === 'load-visitors') {
+    const target = $('visitorStats'); target.textContent = 'লোড হচ্ছে…';
+    const {count,error} = await db.from('site_visits').select('*',{count:'exact',head:true});
+    target.textContent = error ? 'ভিজিটর হিসাব পাওয়া যায়নি: ' + error.message + '। SQL setup এবং index.html tracking লাগবে।' : 'মোট recorded visits: ' + count;
+    return;
+  }
+  if (b.dataset.deleteCms && b.dataset.table) {
+    if (!confirm('এই তথ্যটি মুছে ফেলবেন?')) return;
+    const {error} = await db.from(b.dataset.table).delete().eq('id',b.dataset.deleteCms);
+    if (error) message('ডিলিট হয়নি: ' + error.message);
+    else { message('তথ্য মুছে ফেলা হয়েছে।'); await loadCmsList(activePage); }
+  }
+  if (b.dataset.editPage) {
+    const {data,error} = await db.from('site_pages').select('*').eq('id',b.dataset.editPage).single();
+    if (error) return message('পেজ লোড হয়নি: ' + error.message);
+    const form = $('pageForm');
+    if (form) {
+      form.elements.slug.value = data.slug || 'about-us';
+      form.elements.title.value = data.title || '';
+      form.elements.content.value = data.content || '';
+      form.elements.is_published.checked = !!data.is_published;
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
   }
 });
 
