@@ -145,5 +145,108 @@ const SUPABASE_KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
   }
 }
   </script>
+  <!-- Buyzen Live Products -->
+<section id="live-products" style="padding:24px 16px;max-width:1200px;margin:auto;">
+  <h2 style="margin-bottom:16px;">আমাদের পণ্য</h2>
+  <div id="live-category-list" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;"></div>
+  <div id="live-product-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;"></div>
+  <p id="live-product-message" style="color:#666;"></p>
+</section>
+
+<script>
+(async function () {
+  const URL = "https://hltvfckfbqegqsiimduw.supabase.co";
+  const KEY = "sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq";
+
+  const productsBox = document.getElementById("live-product-list");
+  const categoriesBox = document.getElementById("live-category-list");
+  const message = document.getElementById("live-product-message");
+
+  try {
+    const response = await fetch(
+      URL + "/rest/v1/products?select=id,name,description,price,image_url,category,stock,is_active&is_active=eq.true&order=created_at.desc",
+      {
+        headers: {
+          apikey: KEY,
+          Authorization: "Bearer " + KEY
+        }
+      }
+    );
+
+    if (!response.ok) throw new Error("পণ্য লোড হয়নি: " + await response.text());
+
+    const products = await response.json();
+
+    if (!products.length) {
+      message.textContent = "এখনো কোনো সক্রিয় পণ্য নেই।";
+      return;
+    }
+
+    const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+
+    function showProducts(category = "সব") {
+      productsBox.replaceChildren();
+
+      const filtered = category === "সব"
+        ? products
+        : products.filter(p => p.category === category);
+
+      filtered.forEach(p => {
+        const card = document.createElement("article");
+        card.style.cssText = "border:1px solid #eee;border-radius:12px;overflow:hidden;background:white;padding-bottom:12px;";
+
+        if (p.image_url) {
+          const img = document.createElement("img");
+          img.src = p.image_url;
+          img.alt = p.name || "পণ্য";
+          img.loading = "lazy";
+          img.style.cssText = "width:100%;height:180px;object-fit:cover;";
+          card.appendChild(img);
+        }
+
+        const title = document.createElement("h3");
+        title.textContent = p.name || "";
+        title.style.cssText = "font-size:17px;margin:12px 10px 6px;";
+
+        const price = document.createElement("p");
+        price.textContent = "৳" + Number(p.price).toLocaleString("en-BD");
+        price.style.cssText = "font-weight:bold;margin:6px 10px;";
+
+        const description = document.createElement("p");
+        description.textContent = p.description || "";
+        description.style.cssText = "font-size:14px;margin:6px 10px;color:#555;";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "অর্ডার করুন";
+        button.style.cssText = "margin:8px 10px;padding:10px 14px;border:0;border-radius:8px;background:#176b45;color:white;cursor:pointer;";
+        button.onclick = () => {
+          const text = "আমি এই পণ্যটি অর্ডার করতে চাই: " + p.name + " — ৳" + p.price;
+          window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
+        };
+
+        card.append(title, price, description, button);
+        productsBox.appendChild(card);
+      });
+
+      message.textContent = "";
+    }
+
+    ["সব", ...categories].forEach(category => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = category;
+      button.style.cssText = "padding:8px 14px;border:1px solid #ddd;border-radius:20px;background:#f5f8f5;cursor:pointer;";
+      button.onclick = () => showProducts(category);
+      categoriesBox.appendChild(button);
+    });
+
+    showProducts();
+  } catch (error) {
+    message.textContent = "পণ্য দেখাতে সমস্যা হচ্ছে। " + error.message;
+    console.error("Buyzen product loading error:", error);
+  }
+})();
+</script>
 </body>
 </html>
