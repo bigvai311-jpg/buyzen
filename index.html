@@ -54,6 +54,30 @@
     .panel.active{display:block}
     .panel h2{margin:6px 0 15px}
     .field{width:100%;padding:12px;border:1px solid #d9dfd5;border-radius:8px;font-size:15px;margin:7px 0 12px}
+
+    .checkout-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#102416a8;padding:16px;overflow:auto;align-items:center;justify-content:center}
+    .checkout-backdrop.open{display:flex}
+    .checkout-modal{width:min(100%,560px);background:#fffdf7;border-radius:24px;overflow:hidden;box-shadow:0 24px 70px #061a0c55;max-height:calc(100dvh - 32px);overflow-y:auto}
+    .checkout-head{background:linear-gradient(135deg,#14532d,#27834a);color:#fff;padding:23px 22px;position:relative}
+    .checkout-head h2{margin:0 38px 7px 0;font-size:24px;color:#fff}.checkout-head p{margin:0;color:#e6f5e8;font-size:13px;line-height:1.6}
+    .checkout-close{position:absolute;right:14px;top:14px;border:1px solid #ffffff66;background:#ffffff20;color:#fff;border-radius:50%;width:36px;height:36px;font-size:23px;cursor:pointer}
+    .checkout-body{padding:20px}
+    .checkout-step{font-size:16px;font-weight:800;color:#174b2a;margin:0 0 12px}
+    .checkout-label{display:block;font-size:13px;font-weight:700;color:#31523a;margin:12px 0 5px}
+    .checkout-input{width:100%;border:1px solid #d6e2d3;background:#fff;border-radius:12px;padding:13px 14px;font:inherit;color:#193b22;outline:none}
+    .checkout-input:focus{border-color:#26834b;box-shadow:0 0 0 3px #26834b1a}
+    .checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .delivery-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 17px}
+    .delivery-option{border:1.5px solid #dce5d6;border-radius:13px;padding:12px;background:#fff;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5}
+    .delivery-option.selected{border-color:#21834a;background:#eff8ed;box-shadow:0 0 0 2px #21834a12}
+    .delivery-option input{accent-color:#176b2c;margin-top:3px}
+    .qty-control{display:flex;align-items:center;gap:12px}.qty-control button{width:36px;height:36px;border:0;border-radius:10px;background:#e7f2e3;color:#17552c;font-size:22px;cursor:pointer}
+    .summary-card{background:#f0f6e9;border:1px solid #dce9d3;border-radius:16px;padding:14px;margin:16px 0}
+    .summary-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:14px}.summary-row.total{border-top:1px solid #d3e2ca;margin-top:7px;padding-top:12px;font-size:17px;font-weight:800;color:#154a28}
+    .checkout-submit{width:100%;padding:15px;border:0;border-radius:14px;background:linear-gradient(135deg,#176b2c,#258b4a);color:#fff;font-size:16px;font-weight:800;box-shadow:0 7px 18px #176b2c33;cursor:pointer}
+    .checkout-submit:disabled{opacity:.6;cursor:wait}.checkout-note{font-size:12px;line-height:1.7;color:#627264;text-align:center;margin:10px 0 0}
+    .checkout-status{padding:11px 13px;border-radius:11px;margin:10px 0;font-size:13px;line-height:1.6;display:none}.checkout-status.show{display:block}.checkout-status.error{background:#fff0ef;color:#9b2c25}.checkout-status.success{background:#eaf7e8;color:#14532d}
+    @media(max-width:420px){.checkout-body{padding:16px}.delivery-options,.checkout-grid{grid-template-columns:1fr}.checkout-head{padding:20px 18px}}
     @media(min-width:700px){
       body{padding-bottom:0}
       .hero{padding:55px 8%}.hero h1{font-size:48px}
@@ -128,6 +152,41 @@
     <p id="accountMessage" role="status"></p>
   </section>
 
+  <div class="checkout-backdrop" id="checkoutBackdrop" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+    <section class="checkout-modal">
+      <div class="checkout-head">
+        <button class="checkout-close" type="button" id="checkoutClose" aria-label="বন্ধ করুন">×</button>
+        <h2 id="checkoutTitle">🌿 অর্ডার কনফার্ম করুন</h2>
+        <p>আপনার তথ্য দিন। অর্ডারটি ওয়েবসাইটে জমা হবে, তারপর চাইলে WhatsApp-এ যোগাযোগ করতে পারবেন।</p>
+      </div>
+      <form class="checkout-body" id="checkoutForm">
+        <p class="checkout-step">১. আপনার তথ্য</p>
+        <label class="checkout-label" for="orderName">আপনার নাম *</label>
+        <input class="checkout-input" id="orderName" name="customer_name" required maxlength="120" autocomplete="name" placeholder="সম্পূর্ণ নাম">
+        <div class="checkout-grid">
+          <div><label class="checkout-label" for="orderPhone">মোবাইল নম্বর *</label><input class="checkout-input" id="orderPhone" name="phone" required inputmode="tel" autocomplete="tel" maxlength="20" placeholder="01XXXXXXXXX"></div>
+          <div><label class="checkout-label" for="orderQty">পরিমাণ (পিস) *</label><div class="qty-control"><button type="button" id="qtyMinus" aria-label="কমাও">−</button><strong id="qtyValue">1</strong><button type="button" id="qtyPlus" aria-label="বাড়াও">+</button></div></div>
+        </div>
+        <label class="checkout-label" for="orderAddress">সম্পূর্ণ বর্তমান ঠিকানা *</label>
+        <textarea class="checkout-input" id="orderAddress" name="address" required maxlength="500" rows="3" autocomplete="street-address" placeholder="জেলা, উপজেলা, এলাকা, গ্রাম/বাসা"></textarea>
+        <p class="checkout-step" style="margin-top:20px">২. ডেলিভারি এলাকা</p>
+        <div class="delivery-options">
+          <label class="delivery-option"><input type="radio" name="delivery_area" value="inside" checked><span><b>ঢাকার ভিতরে</b><br>ডেলিভারি চার্জ ৳১০০</span></label>
+          <label class="delivery-option"><input type="radio" name="delivery_area" value="outside"><span><b>ঢাকার বাইরে</b><br>ডেলিভারি চার্জ ৳১২০</span></label>
+        </div>
+        <div class="summary-card">
+          <div class="summary-row"><span id="summaryProduct">পণ্য</span><b id="summaryQty">১ পিস</b></div>
+          <div class="summary-row"><span>পণ্যের মূল্য</span><b id="summarySubtotal">৳০</b></div>
+          <div class="summary-row"><span>ডেলিভারি চার্জ</span><b id="summaryDelivery">৳১০০</b></div>
+          <div class="summary-row total"><span>সর্বমোট</span><b id="summaryTotal">৳১০০</b></div>
+        </div>
+        <div class="checkout-status" id="checkoutStatus" role="status"></div>
+        <button class="checkout-submit" id="checkoutSubmit" type="submit">অর্ডার কনফার্ম করুন →</button>
+        <p class="checkout-note">পেমেন্ট: ক্যাশ অন ডেলিভারি। অর্ডার জমা দেওয়ার পর WhatsApp-এ যোগাযোগের অপশন পাবেন।</p>
+      </form>
+    </section>
+  </div>
+
   <footer>🌿 Buyzen — প্রকৃতির আসল স্বাদ<br>যোগাযোগ | ডেলিভারি নীতি | রিটার্ন নীতি<br>© Buyzen</footer>
 
   <nav class="bottom-nav" aria-label="প্রধান নেভিগেশন">
@@ -187,7 +246,8 @@
     });
 
     document.getElementById("cartButton").addEventListener("click", () => {
-      alert("কার্ট সুবিধা এখনো যুক্ত করা হয়নি। আপাতত পণ্যের 'অর্ডার করুন' বাটন ব্যবহার করুন।");
+      if (allProducts.length) openCheckout(allProducts[0]);
+      else alert("আগে Admin Panel থেকে একটি সক্রিয় পণ্য যোগ করুন।");
     });
 
     document.getElementById("accountHelp").addEventListener("click", () => {
@@ -224,10 +284,7 @@
       buy.className = "buy";
       buy.type = "button";
       buy.textContent = "অর্ডার করুন";
-      buy.addEventListener("click", () => {
-        const text = "আমি এই পণ্যটি অর্ডার করতে চাই: " + (p.name || "পণ্য") + " — ৳" + p.price;
-        window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
-      });
+      buy.addEventListener("click", () => openCheckout(p));
       info.append(title, price, buy);
       card.appendChild(info);
       return card;
@@ -250,6 +307,129 @@
       });
     }
 
+
+    let checkoutProduct = null;
+    let checkoutQty = 1;
+    const checkoutBackdrop = document.getElementById("checkoutBackdrop");
+    const checkoutForm = document.getElementById("checkoutForm");
+    const checkoutStatus = document.getElementById("checkoutStatus");
+    const moneyBD = value => "৳" + Number(value || 0).toLocaleString("bn-BD");
+    function openCheckout(product) {
+      checkoutProduct = product;
+      checkoutQty = 1;
+      document.getElementById("qtyValue").textContent = "১";
+      document.getElementById("summaryProduct").textContent = product.name || "পণ্য";
+      checkoutStatus.className = "checkout-status";
+      checkoutStatus.textContent = "";
+      document.getElementById("checkoutSubmit").disabled = false;
+      updateCheckoutSummary();
+      checkoutBackdrop.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function closeCheckout() {
+      checkoutBackdrop.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+    function updateCheckoutSummary() {
+      if (!checkoutProduct) return;
+      const fee = document.querySelector('input[name="delivery_area"]:checked')?.value === "inside" ? 100 : 120;
+      const subtotal = Number(checkoutProduct.price || 0) * checkoutQty;
+      document.getElementById("qtyValue").textContent = checkoutQty.toLocaleString("bn-BD");
+      document.getElementById("summaryQty").textContent = checkoutQty.toLocaleString("bn-BD") + " পিস";
+      document.getElementById("summarySubtotal").textContent = moneyBD(subtotal);
+      document.getElementById("summaryDelivery").textContent = moneyBD(fee);
+      document.getElementById("summaryTotal").textContent = moneyBD(subtotal + fee);
+      document.querySelectorAll(".delivery-option").forEach(label => {
+        const input = label.querySelector("input");
+        label.classList.toggle("selected", input.checked);
+      });
+    }
+    document.getElementById("checkoutClose").addEventListener("click", closeCheckout);
+    checkoutBackdrop.addEventListener("click", e => { if (e.target === checkoutBackdrop) closeCheckout(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeCheckout(); });
+    document.getElementById("qtyMinus").addEventListener("click", () => { checkoutQty = Math.max(1, checkoutQty - 1); updateCheckoutSummary(); });
+    document.getElementById("qtyPlus").addEventListener("click", () => { checkoutQty = Math.min(99, checkoutQty + 1); updateCheckoutSummary(); });
+    document.querySelectorAll('input[name="delivery_area"]').forEach(input => input.addEventListener("change", updateCheckoutSummary));
+
+    checkoutForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!checkoutProduct) return;
+      const submit = document.getElementById("checkoutSubmit");
+      const customerName = document.getElementById("orderName").value.trim();
+      const phone = document.getElementById("orderPhone").value.trim();
+      const address = document.getElementById("orderAddress").value.trim();
+      const deliveryArea = document.querySelector('input[name="delivery_area"]:checked')?.value || "inside";
+      if (!customerName || !phone || !address) {
+        checkoutStatus.className = "checkout-status show error";
+        checkoutStatus.textContent = "নাম, মোবাইল নম্বর ও সম্পূর্ণ ঠিকানা পূরণ করুন।";
+        return;
+      }
+      const digits = phone.replace(/\D/g, "");
+      if (digits.length < 10 || digits.length > 15) {
+        checkoutStatus.className = "checkout-status show error";
+        checkoutStatus.textContent = "সঠিক মোবাইল নম্বর লিখুন।";
+        return;
+      }
+      const deliveryFee = deliveryArea === "inside" ? 100 : 120;
+      const subtotal = Number(checkoutProduct.price || 0) * checkoutQty;
+      const total = subtotal + deliveryFee;
+      const items = [{
+        product_id: checkoutProduct.id,
+        name: checkoutProduct.name || "পণ্য",
+        price: Number(checkoutProduct.price || 0),
+        quantity: checkoutQty
+      }];
+      const orderRecord = {
+        customer_name: customerName,
+        phone,
+        address,
+        items,
+        total_amount: total,
+        status: "pending"
+      };
+      submit.disabled = true;
+      submit.textContent = "অর্ডার জমা হচ্ছে…";
+      checkoutStatus.className = "checkout-status";
+      try {
+        const response = await fetch(SUPABASE_URL + "/rest/v1/orders?select=id,customer_name,phone,address,items,total_amount,status,created_at", {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: "Bearer " + SUPABASE_KEY,
+            "Content-Type": "application/json",
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify(orderRecord)
+        });
+        const result = await response.json().catch(() => []);
+        if (!response.ok) {
+          const detail = result?.message || result?.details || result?.hint || "ডেটাবেসে অর্ডার সংরক্ষণ হয়নি।";
+          throw new Error(detail);
+        }
+        const saved = Array.isArray(result) ? result[0] : result;
+        checkoutStatus.className = "checkout-status show success";
+        checkoutStatus.textContent = "অর্ডার সফলভাবে জমা হয়েছে! অর্ডার নম্বর: #" + (saved?.id ?? "—") + "। চাইলে নিচের WhatsApp বোতামে যোগাযোগ করুন।";
+        submit.textContent = "অর্ডার জমা হয়েছে ✓";
+        const whatsapp = document.createElement("a");
+        whatsapp.className = "checkout-submit";
+        whatsapp.style.display = "block";
+        whatsapp.style.textAlign = "center";
+        whatsapp.style.textDecoration = "none";
+        whatsapp.style.marginTop = "10px";
+        whatsapp.style.background = "linear-gradient(135deg,#128c4a,#25b968)";
+        whatsapp.textContent = "WhatsApp-এ যোগাযোগ করুন";
+        const message = `Buyzen অর্ডার #${saved?.id ?? ""}\nনাম: ${customerName}\nফোন: ${phone}\nঠিকানা: ${address}\nপণ্য: ${checkoutProduct.name}\nপরিমাণ: ${checkoutQty}\nপণ্যের মূল্য: ${moneyBD(subtotal)}\nডেলিভারি: ${moneyBD(deliveryFee)} (${deliveryArea === "inside" ? "ঢাকার ভিতরে" : "ঢাকার বাইরে"})\nমোট: ${moneyBD(total)}`;
+        whatsapp.href = "https://wa.me/?text=" + encodeURIComponent(message);
+        whatsapp.target = "_blank";
+        whatsapp.rel = "noopener noreferrer";
+        document.getElementById("checkoutSubmit").after(whatsapp);
+      } catch (error) {
+        checkoutStatus.className = "checkout-status show error";
+        checkoutStatus.textContent = "অর্ডার জমা হয়নি: " + error.message + "। Supabase orders টেবিলের INSERT permission পরীক্ষা করতে হবে।";
+        submit.disabled = false;
+        submit.textContent = "আবার চেষ্টা করুন";
+      }
+    });
 
     async function loadBanner() {
       const hero = document.getElementById("homeBanner");
