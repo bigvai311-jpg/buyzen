@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Buyzen Admin Panel</title>
 <style>
+*{box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:#f3f6f4;margin:0;color:#222}
 header{background:#176b43;color:white;padding:18px}
 main{max-width:900px;margin:20px auto;padding:12px}
@@ -21,9 +22,7 @@ button.delete{background:#b42318}
 <body>
 <header><h2>Buyzen Admin Panel</h2></header>
 <main>
-<div class="card">
-<div id="message">Supabase সংযোগ হচ্ছে...</div>
-</div>
+<div class="card"><div id="message">Supabase সংযোগ হচ্ছে...</div></div>
 
 <div class="card" id="loginBox">
 <h3>Admin Login</h3>
@@ -65,20 +64,23 @@ button.delete{background:#b42318}
 import { createClient } from
 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-/* নিচের ৩টি মান তোমার আগের admin.html থেকে বসাও */
-const SUPABASE_URL = 'PASTE_SUPABASE_URL_HERE';
-const SUPABASE_KEY = 'PASTE_PUBLISHABLE_KEY_HERE';
-const ADMIN_EMAIL = 'PASTE_ADMIN_EMAIL_HERE';
+const SUPABASE_URL = 'https://hltvfckfbqegqsiimduw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq';
+const ADMIN_EMAIL = 'bigvai311@gmail.com';
 const BUCKET = 'product-images';
 
 const $ = id => document.getElementById(id);
-const say = (text) => $('message').textContent = text;
+const say = text => $('message').textContent = text;
 
-let db, currentUser = null;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true }
+});
+
+let currentUser = null;
 
 function showUser(user) {
   currentUser = user;
-  const allowed = !!user && user.email &&
+  const allowed = !!user && !!user.email &&
     user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 
   $('loginBox').classList.toggle('hidden', allowed);
@@ -89,7 +91,7 @@ function showUser(user) {
 async function uploadImage(file) {
   if (!file) return null;
   if (!file.type.startsWith('image/')) {
-    throw new Error('ছবির ফাইল সঠিক নয়।');
+    throw new Error('শুধু ছবির ফাইল আপলোড করা যাবে।');
   }
   if (file.size > 5 * 1024 * 1024) {
     throw new Error('ছবির সাইজ ৫ MB-এর কম হতে হবে।');
@@ -97,7 +99,6 @@ async function uploadImage(file) {
 
   const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '');
   const path = currentUser.id + '/' + Date.now() + '-' + safeName;
-
   const { error } = await db.storage.from(BUCKET).upload(path, file, {
     contentType: file.type,
     upsert: false
@@ -110,12 +111,18 @@ async function uploadImage(file) {
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   try {
-    const { error } = await db.auth.signInWithPassword({
+    const { data, error } = await db.auth.signInWithPassword({
       email: $('email').value.trim(),
       password: $('password').value
     });
     if (error) throw error;
+
+    if (!showUser(data.user)) {
+      await db.auth.signOut();
+      throw new Error('এই ইমেইলটি Admin হিসেবে অনুমোদিত নয়।');
+    }
     say('লগইন সফল।');
+    await loadProducts();
   } catch (error) {
     say('লগইন হয়নি: ' + error.message);
   }
@@ -131,11 +138,12 @@ $('productForm').addEventListener('submit', async e => {
 
   if (!currentUser ||
       currentUser.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-    say('Admin হিসেবে লগইন করুন।');
+    say('প্রথমে Admin হিসেবে লগইন করুন।');
     return;
   }
 
   $('saveButton').disabled = true;
+  say('পণ্য সংরক্ষণ হচ্ছে...');
 
   try {
     const id = $('productId').value;
@@ -164,7 +172,7 @@ $('productForm').addEventListener('submit', async e => {
     $('cancelButton').classList.add('hidden');
     $('active').checked = true;
 
-    say('পণ্য সংরক্ষিত হয়েছে।');
+    say('পণ্য সফলভাবে সংরক্ষিত হয়েছে।');
     await loadProducts();
   } catch (error) {
     say('পণ্য সংরক্ষণ হয়নি: ' + error.message);
@@ -179,20 +187,20 @@ $('cancelButton').addEventListener('click', () => {
   $('formHeading').textContent = 'নতুন পণ্য যোগ করুন';
   $('saveButton').textContent = 'পণ্য সংরক্ষণ করুন';
   $('cancelButton').classList.add('hidden');
+  $('active').checked = true;
 });
 
 $('refreshButton').addEventListener('click', loadProducts);
 
 async function loadProducts() {
   if (!currentUser) return;
-
   $('productsList').textContent = 'পণ্য লোড হচ্ছে...';
 
   const { data, error } = await db
     .from('products').select('*').order('id', { ascending: false });
 
   if (error) {
-    $('productsList').textContent = 'লোড হয়নি: ' + error.message;
+    $('productsList').textContent = 'পণ্য লোড হয়নি: ' + error.message;
     return;
   }
 
@@ -210,7 +218,7 @@ async function loadProducts() {
     if (p.image_url) {
       const img = document.createElement('img');
       img.src = p.image_url;
-      img.alt = p.name || 'পণ্য';
+      img.alt = p.name || 'পণ্যের ছবি';
       box.append(img);
     }
 
@@ -233,7 +241,7 @@ async function loadProducts() {
       $('formHeading').textContent = 'পণ্য সম্পাদনা';
       $('saveButton').textContent = 'পরিবর্তন সংরক্ষণ করুন';
       $('cancelButton').classList.remove('hidden');
-      window.scrollTo({top: 0, behavior: 'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const del = document.createElement('button');
@@ -255,35 +263,26 @@ async function loadProducts() {
 }
 
 async function init() {
-  if ([SUPABASE_URL, SUPABASE_KEY, ADMIN_EMAIL].some(v => v.includes('PASTE_'))) {
-    say('প্রথমে কোডে Supabase URL, publishable key ও Admin Email বসান।');
-    return;
-  }
+  try {
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
 
-  db = createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true
+    const user = data.session?.user || null;
+    if (showUser(user)) {
+      say('Admin লগইন আছে।');
+      await loadProducts();
+    } else {
+      say('Admin ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।');
     }
-  });
 
-  const { data, error } = await db.auth.getSession();
-  if (error) {
-    say(error.message);
-    return;
+    db.auth.onAuthStateChange((_event, session) => {
+      const allowed = showUser(session?.user || null);
+      if (allowed) loadProducts();
+      else if (!session?.user) say('Admin ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।');
+    });
+  } catch (error) {
+    say('Supabase সংযোগে সমস্যা: ' + error.message);
   }
-
-  if (showUser(data.session?.user || null)) {
-    say('Admin লগইন আছে।');
-    await loadProducts();
-  } else {
-    say('Admin ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।');
-  }
-
-  db.auth.onAuthStateChange((_event, session) => {
-    const allowed = showUser(session?.user || null);
-    if (allowed) loadProducts();
-  });
 }
 
 init();
