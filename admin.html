@@ -6,38 +6,58 @@
 <meta name="theme-color" content="#176b43">
 <title>Buyzen Admin Dashboard</title>
 <style>
-:root{--green:#176b43;--green2:#218653;--bg:#f4f7f5;--ink:#1b2c22;--muted:#66756b;--line:#e2e9e4;--red:#b42318}
+:root{--green:#176b43;--green2:#218653;--bg:#f4f7f5;--ink:#1b2c22;--muted:#66756b;--line:#e2e9e4;--red:#b42318;--amber:#a15c00}
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:var(--bg);color:var(--ink)}
-button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
-.login-card{background:#fff;padding:28px;border-radius:18px;width:min(100%,420px);box-shadow:0 10px 35px #163d2414}
-.brand{font-weight:800;font-size:25px;color:var(--green)}.brand span{color:#d83222}
+.login-card{background:white;padding:28px;border-radius:18px;width:min(100%,420px);box-shadow:0 10px 35px #163d2414}
+.brand{font-weight:800;font-size:25px;color:var(--green)}
+.brand span{color:#d83222}
 .muted{color:var(--muted);font-size:13px;line-height:1.6}
-.field{display:block;width:100%;padding:12px;border:1px solid #ccd8cf;border-radius:9px;margin:7px 0 14px;background:#fff}
-.btn{border:0;border-radius:9px;padding:11px 14px;background:var(--green);color:#fff;font-weight:700}.btn:hover{background:var(--green2)}
-.btn.secondary{background:#e9f2ec;color:var(--green)}.btn.danger{background:var(--red)}.btn.light{background:#eef2ef;color:#24352a}.btn.small{padding:7px 10px;font-size:13px}
-#loginMessage,#globalMessage{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.field{display:block;width:100%;padding:12px;border:1px solid #ccd8cf;border-radius:9px;margin:7px 0 14px;background:white}
+.btn{border:0;border-radius:9px;padding:11px 14px;background:var(--green);color:white;font-weight:700}
+.btn:hover{background:var(--green2)}
+.btn.secondary{background:#e9f2ec;color:var(--green)}
+.btn.danger{background:var(--red)}
+.btn.light{background:#eef2ef;color:#24352a}
+.btn.small{padding:7px 10px;font-size:13px}
+#loginMessage,#message{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
 .layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
 .sidebar{background:#123d29;color:#fff;padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto}
-.sidebar .brand{color:#fff;padding:4px 10px 20px}.side-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#a8c9b4;padding:14px 10px 6px}
+.sidebar .brand{color:white;padding:4px 10px 20px}
+.side-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#a8c9b4;padding:14px 10px 6px}
 .nav{width:100%;display:flex;align-items:center;gap:10px;border:0;border-radius:9px;padding:11px 10px;background:transparent;color:#e5f1e8;text-align:left;margin:2px 0}
-.nav:hover,.nav.active{background:#286548;color:#fff}.main{min-width:0}
+.nav:hover,.nav.active{background:#286548;color:white}
+.main{min-width:0}
 .topbar{background:#fff;border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5}
-.topbar h1{font-size:20px;margin:0}.content{padding:22px;max-width:1450px;margin:auto}
+.topbar h1{font-size:20px;margin:0}
+.content{padding:22px;max-width:1450px;margin:auto}
 .notice{padding:12px 14px;background:#fff7df;border:1px solid #f2df9c;border-radius:10px;color:#76500b;margin-bottom:16px;font-size:13px;line-height:1.6}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .stat,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:16px;min-width:0}
-.stat .label{font-size:13px;color:var(--muted)}.stat .number{font-size:27px;font-weight:800;margin-top:9px;overflow-wrap:anywhere}
-.panel h2,.panel h3{margin:0 0 14px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}
-th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}th{color:#607066;background:#f8faf8}
+.stat .label{font-size:13px;color:var(--muted)}
+.stat .number{font-size:27px;font-weight:800;margin-top:9px;overflow-wrap:anywhere}
+.panel h2,.panel h3{margin:0 0 14px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:680px}
+th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+th{color:#607066;background:#f8faf8}
 td select{padding:7px;border:1px solid #ccd8cf;border-radius:7px;max-width:150px}
-.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e8f4eb;color:#176b43;font-size:12px}.pill.off{background:#fff0ed;color:#a1261b}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.form-grid label{font-size:13px;color:#506055}.form-grid .full{grid-column:1/-1}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e8f4eb;color:#176b43;font-size:12px}
+.pill.off{background:#fff0ed;color:#a1261b}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.form-grid label{font-size:13px;color:#506055}
+.form-grid .full{grid-column:1/-1}
 .product-row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
-.product-row img{width:62px;height:62px;object-fit:cover;border-radius:8px;background:#f2f4f2}.product-actions{display:flex;gap:6px;flex-wrap:wrap}
-.empty{padding:22px;text-align:center;color:var(--muted)}textarea.field{min-height:90px;resize:vertical}hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+.product-row img{width:62px;height:62px;object-fit:cover;border-radius:8px;background:#f2f4f2}
+.product-actions{display:flex;gap:6px;flex-wrap:wrap}
+.empty{padding:22px;text-align:center;color:var(--muted)}
+textarea.field{min-height:90px;resize:vertical}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:12px}.sidebar .brand{padding:5px 8px 10px}.nav-list{display:flex;overflow:auto;gap:4px}.nav{white-space:nowrap;width:auto;flex:0 0 auto;padding:9px 11px}.side-label{display:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{position:static}.content{padding:14px}}
 @media(max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:8px}.stat,.panel{padding:13px}.stat .number{font-size:21px}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.topbar{padding:12px}.topbar h1{font-size:17px}.content{padding:10px}.product-row{grid-template-columns:48px minmax(0,1fr)}.product-row img{width:48px;height:48px}.product-actions{grid-column:1/-1}}
 </style>
@@ -52,28 +72,41 @@ td select{padding:7px;border:1px solid #ccd8cf;border-radius:7px;max-width:150px
     <input class="field" id="email" type="email" autocomplete="username" placeholder="Admin Email" required>
     <label for="password">Password</label>
     <input class="field" id="password" type="password" autocomplete="current-password" placeholder="Password" required>
-    <button class="btn" style="width:100%" id="loginButton" type="submit">Login</button>
-    <p id="loginMessage" class="muted" role="status"></p>
+    <button class="btn" style="width:100%" id="loginButton">Login</button>
+    <p id="loginMessage" class="muted"></p>
   </form>
 </div>
+
 <div id="app" class="layout hidden">
   <aside class="sidebar">
-    <div class="brand">🌿 Buy<span>zen</span></div><div class="side-label">Overview</div>
+    <div class="brand">🌿 Buy<span>zen</span></div>
+    <div class="side-label">Overview</div>
     <div class="nav-list">
-      <button class="nav active" data-page="dashboard">📊 Dashboard</button><button class="nav" data-page="orders">📦 Orders</button>
-      <button class="nav" data-page="incomplete">🕒 Incomplete Orders</button><button class="nav" data-page="products">🛍️ Products</button>
-      <button class="nav" data-page="categories">🗂️ Categories</button><button class="nav" data-page="reviews">⭐ Reviews</button>
-      <button class="nav" data-page="banners">🖼️ Banners</button><button class="nav" data-page="pages">📄 Pages</button>
-      <button class="nav" data-page="features">✨ Featured Products</button><button class="nav" data-page="logistics">🚚 Tracking & Logistics</button>
-      <button class="nav" data-page="team">👥 Team</button><button class="nav" data-page="appearance">🎨 Appearance</button>
-      <button class="nav" data-page="seo">🔎 SEO</button><button class="nav" data-page="settings">⚙️ General Settings</button>
-    </div><hr style="border-color:#35674c"><button id="logoutButton" class="nav" type="button">↩ Logout</button>
+      <button class="nav active" data-page="dashboard">📊 Dashboard</button>
+      <button class="nav" data-page="orders">📦 Orders</button>
+      <button class="nav" data-page="incomplete">🕒 Incomplete Orders</button>
+      <button class="nav" data-page="products">🛍️ Products</button>
+      <button class="nav" data-page="categories">🗂️ Categories</button>
+      <button class="nav" data-page="reviews">⭐ Reviews</button>
+      <button class="nav" data-page="banners">🖼️ Banners</button>
+      <button class="nav" data-page="pages">📄 Pages</button>
+      <button class="nav" data-page="features">✨ Featured Products</button>
+      <button class="nav" data-page="logistics">🚚 Logistics & Tracking</button>
+      <button class="nav" data-page="analytics">📈 Analytics</button>
+      <button class="nav" data-page="settings">⚙️ Settings & SEO</button>
+    </div>
+    <hr style="border-color:#35674c">
+    <button id="logoutButton" class="nav">↩ Logout</button>
   </aside>
   <section class="main">
-    <header class="topbar"><h1 id="pageTitle">Dashboard</h1><a href="./" target="_blank" rel="noopener" style="color:#176b43;font-weight:bold;text-decoration:none">ওয়েবসাইট দেখুন ↗</a></header>
-    <main class="content"><div id="globalMessage" class="notice hidden" role="status"></div><div id="pageContent"></div></main>
+    <header class="topbar"><h1 id="pageTitle">Dashboard</h1><div><a href="./" target="_blank" rel="noopener" style="color:#176b43;font-weight:bold;text-decoration:none">ওয়েবসাইট দেখুন ↗</a></div></header>
+    <main class="content">
+      <div id="globalMessage" class="notice hidden"></div>
+      <div id="pageContent"></div>
+    </main>
   </section>
 </div>
+
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -81,18 +114,22 @@ const SUPABASE_URL = 'https://hltvfckfbqegqsiimduw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MBxVwagR9WdW3M7m6Jrp8g_ckLRXnFq';
 const ADMIN_EMAIL = 'bigvai311@gmail.com';
 const BUCKET = 'product-images';
-const db = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true}});
 const $ = id => document.getElementById(id);
-let currentUser = null, productsCache = [], ordersCache = [], activePage = 'dashboard';
+let currentUser = null;
+let productsCache = [];
+let ordersCache = [];
+let activePage = 'dashboard';
+let editingProductId = null;
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money = value => '৳' + Number(value || 0).toLocaleString('en-BD');
 const dateText = value => value ? new Date(value).toLocaleString('en-BD') : '—';
-function message(text) { const el = $('globalMessage'); el.textContent = text; el.classList.remove('hidden'); }
-function clearMessage() { $('globalMessage').classList.add('hidden'); }
+const message = text => { const el=$('globalMessage'); el.textContent=text; el.classList.remove('hidden'); };
+const clearMessage = () => $('globalMessage').classList.add('hidden');
 
 function setLoggedIn(user) {
-  const allowed = !!user && String(user.email || '').toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const allowed = !!user && user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
   currentUser = allowed ? user : null;
   $('loginScreen').classList.toggle('hidden', allowed);
   $('app').classList.toggle('hidden', !allowed);
@@ -100,373 +137,176 @@ function setLoggedIn(user) {
 }
 function setPage(page) {
   activePage = page;
-  document.querySelectorAll('.nav[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === page));
-  const titles = {dashboard:'Dashboard',orders:'Orders',incomplete:'Incomplete Orders',products:'Products',categories:'Categories',reviews:'Reviews',banners:'Banners',pages:'Pages',features:'Featured Products',logistics:'Tracking & Logistics',team:'Team',appearance:'Appearance',seo:'SEO',analytics:'Analytics',settings:'General Settings'};
-  $('pageTitle').textContent = titles[page] || 'Dashboard';
+  document.querySelectorAll('.nav[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  const titles={dashboard:'Dashboard',orders:'Orders',incomplete:'Incomplete Orders',products:'Products',addProduct:'নতুন পণ্য যোগ করুন',editProduct:'পণ্য সম্পাদনা',categories:'Categories',reviews:'Reviews',banners:'Banners',pages:'Pages',features:'Featured Products',logistics:'Logistics & Tracking',analytics:'Analytics',settings:'Settings & SEO'};
+  $('pageTitle').textContent=titles[page]||'Dashboard';
   renderPage();
 }
 async function loadData() {
-  if (!currentUser) return;
-  const [p, o] = await Promise.all([
-    db.from('products').select('*').order('created_at', {ascending:false}),
-    db.from('orders').select('*').order('created_at', {ascending:false})
+  if(!currentUser)return;
+  const [p,o] = await Promise.all([
+    db.from('products').select('*').order('created_at',{ascending:false}),
+    db.from('orders').select('*').order('created_at',{ascending:false})
   ]);
-  if (p.error) message('পণ্য লোড হয়নি: ' + p.error.message); else productsCache = p.data || [];
-  if (o.error) message('অর্ডার লোড হয়নি: ' + o.error.message); else ordersCache = o.data || [];
+  if(p.error) message('পণ্য লোড হয়নি: '+p.error.message); else productsCache=p.data||[];
+  if(o.error) message('অর্ডার লোড হয়নি: '+o.error.message); else ordersCache=o.data||[];
   renderPage();
 }
-function statCard(label, value, sub = '') {
+function statCard(label,value,sub='') {
   return `<div class="stat"><div class="label">${esc(label)}</div><div class="number">${esc(value)}</div><div class="muted">${esc(sub)}</div></div>`;
 }
-function orderItems(o) {
-  if (Array.isArray(o.items)) return o.items.map(i => `${i.name || i.product_name || 'পণ্য'} × ${i.quantity || 1}`).join(', ');
-  if (o.items && typeof o.items === 'object') return JSON.stringify(o.items);
-  return String(o.items || '—');
-}
-function ordersTable(rows, allowActions = true) {
-  if (!rows.length) return '<div class="empty">এখনো কোনো অর্ডার পাওয়া যায়নি।</div>';
-  return `<div class="table-wrap"><table><thead><tr><th>অর্ডার</th><th>তারিখ</th><th>ক্রেতা</th><th>পণ্য</th><th>মোট</th><th>স্ট্যাটাস</th>${allowActions ? '<th>কাজ</th>' : ''}</tr></thead><tbody>${rows.map(o => `<tr>
-  <td>#${esc(o.id)}</td><td>${esc(dateText(o.created_at))}</td><td><b>${esc(o.customer_name)}</b><br>${esc(o.phone)}<br><span class="muted">${esc(o.address)}</span></td><td>${esc(orderItems(o))}</td><td>${money(o.total_amount)}</td>
-  <td>${allowActions ? `<select data-status-id="${esc(o.id)}">${['pending','confirmed','processing','shipped','delivered','cancelled'].map(s => `<option value="${s}" ${String(o.status || 'pending').toLowerCase() === s ? 'selected' : ''}>${s}</option>`).join('')}</select>` : `<span class="pill">${esc(o.status || 'pending')}</span>`}</td>
-  ${allowActions ? `<td><button class="btn secondary small" data-detail-id="${esc(o.id)}" type="button">বিস্তারিত</button></td>` : ''}</tr>`).join('')}</tbody></table></div>`;
-}
 function dashboardPage() {
-  const pending = ordersCache.filter(o => String(o.status || 'pending').toLowerCase() === 'pending').length;
-  const revenue = ordersCache.filter(o => ['delivered','completed'].includes(String(o.status || '').toLowerCase())).reduce((s,o) => s + Number(o.total_amount || 0), 0);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const todayOrders = ordersCache.filter(o => o.created_at && new Date(o.created_at) >= today).length;
+  const pending=ordersCache.filter(o=>(o.status||'pending').toLowerCase()==='pending').length;
+  const revenue=ordersCache.filter(o=>['delivered','completed'].includes(String(o.status||'').toLowerCase())).reduce((s,o)=>s+Number(o.total_amount||0),0);
+  const today=new Date(); today.setHours(0,0,0,0);
+  const todayOrders=ordersCache.filter(o=>o.created_at&&new Date(o.created_at)>=today).length;
+  const recent=ordersCache.slice(0,6);
   return `<div class="notice">ডেটাবেজে থাকা অর্ডার ও পণ্য এখানে দেখানো হবে। কোনো অর্ডার না দেখালে Supabase-এর orders টেবিলের Read (SELECT) অনুমতি পরীক্ষা করতে হবে।</div>
   <div class="grid">${statCard('মোট অর্ডার',ordersCache.length,'সব সংরক্ষিত অর্ডার')}${statCard('নতুন / Pending',pending,'যাচাই করা দরকার')}${statCard('আজকের অর্ডার',todayOrders,'আজ তৈরি হয়েছে')}${statCard('Delivered বিক্রি',money(revenue),'Delivered/Completed অর্ডার')}</div>
-  <section class="panel"><div class="panel-head"><h2>সাম্প্রতিক অর্ডার</h2><button class="btn secondary small" data-action="page-orders" type="button">সব অর্ডার দেখুন</button></div>${ordersTable(ordersCache.slice(0,6),false)}</section>
-  <section class="panel"><div class="panel-head"><h2>পণ্যের সারাংশ</h2><button class="btn secondary small" data-action="page-products" type="button">পণ্য পরিচালনা</button></div><p>মোট পণ্য: <b>${productsCache.length}</b> · সক্রিয়: <b>${productsCache.filter(p => p.is_active).length}</b> · স্টক শেষ: <b>${productsCache.filter(p => Number(p.stock) <= 0).length}</b></p></section>`;
+  <section class="panel"><div class="panel-head"><h2>সাম্প্রতিক অর্ডার</h2><button class="btn secondary small" data-action="page-orders">সব অর্ডার দেখুন</button></div>${ordersTable(recent,false)}</section>
+  <section class="panel"><div class="panel-head"><h2>পণ্যের সারাংশ</h2><button class="btn secondary small" data-action="page-products">পণ্য পরিচালনা</button></div><p>মোট পণ্য: <b>${productsCache.length}</b> · সক্রিয়: <b>${productsCache.filter(p=>p.is_active).length}</b> · স্টক শেষ: <b>${productsCache.filter(p=>Number(p.stock)<=0).length}</b></p></section>`;
 }
-function productForm(p = null) {
-  return `<section class="panel"><h2>${p ? 'পণ্য সম্পাদনা' : 'নতুন পণ্য যোগ করুন'}</h2><form id="productForm" data-edit-id="${p ? esc(p.id) : ''}">
+function orderItems(o) {
+  if(Array.isArray(o.items)) return o.items.map(i=>`${i.name||i.product_name||'পণ্য'} × ${i.quantity||1}`).join(', ');
+  if(o.items && typeof o.items==='object') return JSON.stringify(o.items);
+  return String(o.items||'—');
+}
+function ordersTable(rows, allowActions=true) {
+  if(!rows.length)return '<div class="empty">এখনো কোনো অর্ডার পাওয়া যায়নি।</div>';
+  return `<div class="table-wrap"><table><thead><tr><th>অর্ডার</th><th>তারিখ</th><th>ক্রেতা</th><th>পণ্য</th><th>মোট</th><th>স্ট্যাটাস</th>${allowActions?'<th>কাজ</th>':''}</tr></thead><tbody>${rows.map(o=>`<tr>
+  <td>#${esc(o.id)}</td><td>${esc(dateText(o.created_at))}</td><td><b>${esc(o.customer_name)}</b><br>${esc(o.phone)}<br><span class="muted">${esc(o.address)}</span></td><td>${esc(orderItems(o))}</td><td>${money(o.total_amount)}</td>
+  <td>${allowActions?`<select data-status-id="${esc(o.id)}">${['pending','confirmed','processing','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${String(o.status||'pending').toLowerCase()===s?'selected':''}>${s}</option>`).join('')}</select>`:`<span class="pill">${esc(o.status||'pending')}</span>`}</td>
+  ${allowActions?`<td><button class="btn secondary small" data-detail-id="${esc(o.id)}">বিস্তারিত</button></td>`:''}</tr>`).join('')}</tbody></table></div>`;
+}
+function productForm(p=null) {
+  return `<section class="panel"><h2>${p?'পণ্য সম্পাদনা':'নতুন পণ্য যোগ করুন'}</h2><form id="productForm" data-edit-id="${p?esc(p.id):''}">
   <div class="form-grid">
-  <label>পণ্যের নাম<input class="field" name="name" required value="${esc(p?.name || '')}"></label>
-  <label>দাম (টাকা)<input class="field" name="price" type="number" min="0" step="0.01" required value="${esc(p?.price ?? '')}"></label>
-  <label>ক্যাটাগরি<input class="field" name="category" required value="${esc(p?.category || '')}" list="categoryOptions"><datalist id="categoryOptions">${[...new Set(productsCache.map(x => x.category).filter(Boolean))].map(c => `<option value="${esc(c)}"></option>`).join('')}</datalist></label>
-  <label>স্টক<input class="field" name="stock" type="number" min="0" step="1" required value="${esc(p?.stock ?? 0)}"></label>
-  <label class="full">বিবরণ<textarea class="field" name="description">${esc(p?.description || '')}</textarea></label>
+  <label>পণ্যের নাম<input class="field" name="name" required value="${esc(p?.name||'')}"></label>
+  <label>দাম (টাকা)<input class="field" name="price" type="number" min="0" step="0.01" required value="${esc(p?.price??'')}"></label>
+  <label>ক্যাটাগরি<input class="field" name="category" required value="${esc(p?.category||'')}" list="categoryOptions"><datalist id="categoryOptions">${[...new Set(productsCache.map(x=>x.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist></label>
+  <label>স্টক<input class="field" name="stock" type="number" min="0" step="1" required value="${esc(p?.stock??0)}"></label>
+  <label class="full">বিবরণ<textarea class="field" name="description">${esc(p?.description||'')}</textarea></label>
   <label class="full">ছবি (ঐচ্ছিক)<input class="field" name="image" type="file" accept="image/*"><span class="muted">সর্বোচ্চ ৫ MB। নতুন ছবি না দিলে আগের ছবিই থাকবে।</span></label>
-  <label class="full"><input name="is_active" type="checkbox" ${p?.is_active === false ? '' : 'checked'} style="width:auto"> ওয়েবসাইটে দেখাবে</label>
-  </div><button class="btn" type="submit">${p ? 'পরিবর্তন সংরক্ষণ' : 'পণ্য সংরক্ষণ'}</button> <button class="btn light" type="button" data-action="cancel-edit">বাতিল</button></form></section>`;
+  <label class="full"><input name="is_active" type="checkbox" ${p?.is_active===false?'':'checked'} style="width:auto"> ওয়েবসাইটে দেখাবে</label>
+  </div><button class="btn" type="submit">${p?'পরিবর্তন সংরক্ষণ':'পণ্য সংরক্ষণ'}</button> <button class="btn light" type="button" data-action="cancel-product-form">তালিকায় ফিরে যান</button></form></section>`;
 }
 function productsPage() {
-  return `${productForm()}<section class="panel"><div class="panel-head"><h2>পণ্যের তালিকা (${productsCache.length})</h2><button class="btn secondary small" data-action="refresh" type="button">রিফ্রেশ</button></div>${productsCache.length ? productsCache.map(p => `<div class="product-row">${p.image_url ? `<img src="${esc(p.image_url)}" alt="">` : '<div>🛍️</div>'}<div><b>${esc(p.name)}</b><div>${money(p.price)} · স্টক ${esc(p.stock)} · ${p.is_active ? '<span class="pill">সক্রিয়</span>' : '<span class="pill off">লুকানো</span>'}</div><div class="muted">${esc(p.category || 'ক্যাটাগরি নেই')}</div></div><div class="product-actions"><button class="btn secondary small" data-edit-product="${esc(p.id)}" type="button">এডিট</button><button class="btn danger small" data-delete-product="${esc(p.id)}" type="button">ডিলিট</button></div></div>`).join('') : '<div class="empty">এখনো পণ্য নেই।</div>'}</section>`;
-}
-const CMS_TABLES = {
-  banners: 'site_banners',
-  pages: 'site_pages',
-  settings: 'site_settings',
-  appearance: 'site_settings',
-  seo: 'site_settings',
-  team: 'site_team',
-  reviews: 'site_reviews'
-};
-const SETTING_GROUPS = {
-  settings: [
-    ['site_name','ওয়েবসাইটের নাম'],['contact_phone','যোগাযোগের ফোন'],['whatsapp_number','WhatsApp নম্বর'],
-    ['contact_email','ইমেইল'],['facebook_url','Facebook URL'],['instagram_url','Instagram URL'],
-    ['tiktok_url','TikTok URL'],['youtube_url','YouTube URL'],['delivery_info','ডেলিভারি তথ্য']
-  ],
-  appearance: [
-    ['theme_color','প্রধান রং (HEX)'],['logo_url','Logo image URL'],['hero_title','কভার শিরোনাম'],
-    ['hero_subtitle','কভার সাবটাইটেল'],['hero_button_text','কভার বাটনের লেখা'],['hero_button_url','কভার বাটনের লিংক'],
-    ['hero_image_url','কভার ব্যানার image URL']
-  ],
-  seo: [
-    ['seo_title','SEO Title'],['seo_description','Meta Description'],['seo_keywords','Keywords'],
-    ['og_image_url','Social share image URL'],['robots_text','Robots.txt নির্দেশনা']
-  ]
-};
-function cmsPage(page) {
-  if (page === 'banners') return `<section class="panel"><h2>ব্যানার পরিচালনা</h2>
-    <p class="muted">ছবি আপলোড করলে Storage-এর ${esc(BUCKET)} bucket ব্যবহার হবে। SQL setup চালানো এবং bucket policy ঠিক করা লাগবে।</p>
-    <form id="bannerForm"><div class="form-grid">
-    <label>ব্যানারের নাম<input class="field" name="title" required></label>
-    <label>ছবির ফাইল<input class="field" name="image" type="file" accept="image/*" required></label>
-    <label>বাটনের লেখা<input class="field" name="button_text" value="এখনই কিনুন"></label>
-    <label>বাটনের লিংক<input class="field" name="button_url" value="#products"></label>
-    <label class="full">বর্ণনা<input class="field" name="subtitle"></label>
-    <label class="full"><input type="checkbox" name="is_active" checked style="width:auto"> প্রকাশিত / সক্রিয়</label>
-    </div><button class="btn" type="submit">ব্যানার আপলোড ও সংরক্ষণ</button></form></section>
-    <section class="panel"><h2>সংরক্ষিত ব্যানার</h2><div id="bannerList"><p class="muted">ব্যানার লোড করতে নিচের রিফ্রেশ চাপুন।</p></div><button class="btn secondary" data-action="load-banners" type="button">ব্যানার রিফ্রেশ</button></section>`;
-  if (page === 'pages') return `<section class="panel"><h2>পেজ সম্পাদনা</h2>
-    <form id="pageForm"><div class="form-grid">
-    <label>পেজের নাম<select class="field" name="slug"><option value="about-us">About Us</option><option value="contact-us">Contact Us</option><option value="returns-refunds">Returns & Refunds</option><option value="shipping-info">Shipping Information</option><option value="privacy-policy">Privacy Policy</option><option value="terms">Terms & Conditions</option></select></label>
-    <label>পেজের শিরোনাম<input class="field" name="title" required></label>
-    <label class="full">পেজের লেখা<textarea class="field" name="content" rows="7" required></textarea></label>
-    <label class="full"><input type="checkbox" name="is_published" checked style="width:auto"> প্রকাশিত</label>
-    </div><button class="btn" type="submit">পেজ সংরক্ষণ</button></form></section>
-    <section class="panel"><h2>সংরক্ষিত পেজ</h2><div id="pageList"></div><button class="btn secondary" data-action="load-pages" type="button">পেজ রিফ্রেশ</button></section>`;
-  if (['settings','appearance','seo'].includes(page)) {
-    const labels = {settings:'General Settings ও Social Media',appearance:'Theme Customizer / Appearance',seo:'SEO Settings'};
-    const fields = SETTING_GROUPS[page];
-    return `<section class="panel"><h2>${labels[page]}</h2><p class="muted">Save করলে সেটিংস Supabase-এর site_settings টেবিলে সংরক্ষিত হবে। হোমপেজে এগুলো দেখাতে index.html-কে পরে এই সেটিংস পড়ার সঙ্গে যুক্ত করতে হবে।</p>
-      <form id="settingsForm" data-group="${page}"><div class="form-grid">${fields.map(([key,label]) => `<label>${esc(label)}<input class="field" name="${esc(key)}" data-setting-key="${esc(key)}" placeholder="${esc(label)}"></label>`).join('')}</div><button class="btn" type="submit">সেটিংস সংরক্ষণ</button><button class="btn secondary" type="button" data-action="load-settings" data-group="${page}">বর্তমান সেটিংস লোড</button></form></section>`;
-  }
-  if (page === 'team') return `<section class="panel"><h2>টিম মেম্বার যোগ করুন</h2><form id="teamForm"><div class="form-grid">
-    <label>নাম<input class="field" name="name" required></label><label>পদবি<input class="field" name="role"></label>
-    <label>ছবির URL<input class="field" name="image_url" type="url"></label><label>সোশ্যাল লিংক<input class="field" name="social_url" type="url"></label>
-    <label class="full">পরিচিতি<textarea class="field" name="bio"></textarea></label></div><button class="btn" type="submit">টিম মেম্বার সংরক্ষণ</button></form></section><section class="panel"><h2>টিম তালিকা</h2><div id="teamList"></div><button class="btn secondary" data-action="load-team" type="button">রিফ্রেশ</button></section>`;
-  if (page === 'reviews') return `<section class="panel"><h2>গ্রাহক রিভিউ</h2><p class="muted">রিভিউ টেবিল সেটআপের পর এখানে রিভিউ ও প্রকাশের অবস্থা দেখাবে।</p><div id="reviewList"></div><button class="btn secondary" data-action="load-reviews" type="button">রিভিউ লোড</button></section>`;
-  return '<section class="panel"><h2>এই বিভাগ</h2><p class="muted">সেটআপ সম্পন্ন হলে এখানে তথ্য দেখাবে।</p></section>';
-}
-async function loadCmsList(page) {
-  const table = CMS_TABLES[page];
-  if (!table) return;
-  const targetId = ({banners:'bannerList',pages:'pageList',team:'teamList',reviews:'reviewList'})[page];
-  if (!targetId) return;
-  const target = $(targetId);
-  target.textContent = 'লোড হচ্ছে…';
-  const {data,error} = await db.from(table).select('*').order('created_at',{ascending:false});
-  if (error) { target.textContent = 'লোড হয়নি: ' + error.message + ' — SQL setup চালানো হয়েছে কি না দেখুন।'; return; }
-  if (!data?.length) { target.textContent = 'এখনো কোনো তথ্য সংরক্ষিত নেই।'; return; }
-  if (page === 'banners') target.innerHTML = data.map(x => `<div class="product-row">${x.image_url ? `<img src="${esc(x.image_url)}" alt="">` : '🖼️'}<div><b>${esc(x.title)}</b><div class="muted">${esc(x.subtitle || '')}</div><span class="pill ${x.is_active ? '' : 'off'}">${x.is_active ? 'সক্রিয়' : 'লুকানো'}</span></div><div class="product-actions"><button class="btn danger small" data-delete-cms="${esc(x.id)}" data-table="site_banners">ডিলিট</button></div></div>`).join('');
-  else if (page === 'pages') target.innerHTML = data.map(x => `<div class="product-row"><div>📄</div><div><b>${esc(x.title)}</b><div class="muted">${esc(x.slug)} · ${x.is_published ? 'প্রকাশিত' : 'খসড়া'}</div><p>${esc((x.content||'').slice(0,180))}</p></div><div class="product-actions"><button class="btn secondary small" data-edit-page="${esc(x.id)}">এডিট</button><button class="btn danger small" data-delete-cms="${esc(x.id)}" data-table="site_pages">ডিলিট</button></div></div>`).join('');
-  else if (page === 'team') target.innerHTML = data.map(x => `<div class="product-row"><div>👤</div><div><b>${esc(x.name)}</b><div class="muted">${esc(x.role||'')}</div></div><button class="btn danger small" data-delete-cms="${esc(x.id)}" data-table="site_team">ডিলিট</button></div>`).join('');
-  else target.innerHTML = data.map(x => `<div class="product-row"><div>⭐</div><div><b>${esc(x.customer_name||'গ্রাহক')}</b><div>${esc(x.review_text||'')}</div><span class="pill ${x.is_published ? '' : 'off'}">${x.is_published?'প্রকাশিত':'অপ্রকাশিত'}</span></div></div>`).join('');
-}
-async function loadSettings(group) {
-  const {data,error} = await db.from('site_settings').select('key,value');
-  if (error) { message('সেটিংস লোড হয়নি: ' + error.message + ' — SQL setup চালানো হয়েছে কি না দেখুন।'); return; }
-  const form = $('settingsForm');
-  if (!form) return;
-  const map = Object.fromEntries((data||[]).map(x => [x.key,x.value]));
-  form.querySelectorAll('[data-setting-key]').forEach(input => input.value = map[input.dataset.settingKey] || '');
-  message('বর্তমান সেটিংস লোড হয়েছে।');
+  return `<section class="panel"><div class="panel-head"><h2>পণ্যের তালিকা (${productsCache.length})</h2><div><button class="btn small" data-action="add-product">+ নতুন পণ্য যোগ করুন</button> <button class="btn secondary small" data-action="refresh">রিফ্রেশ</button></div></div>${productsCache.length?productsCache.map(p=>`<div class="product-row">${p.image_url?`<img src="${esc(p.image_url)}" alt="">`:'<div>🛍️</div>'}<div><b>${esc(p.name)}</b><div>${money(p.price)} · স্টক ${esc(p.stock)} · ${p.is_active?'<span class="pill">সক্রিয়</span>':'<span class="pill off">লুকানো</span>'}</div><div class="muted">${esc(p.category||'ক্যাটাগরি নেই')}</div></div><div class="product-actions"><button class="btn secondary small" data-edit-product="${esc(p.id)}">এডিট</button><button class="btn danger small" data-delete-product="${esc(p.id)}">ডিলিট</button></div></div>`).join(''):'<div class="empty">এখনো পণ্য নেই। “নতুন পণ্য যোগ করুন” চাপুন।</div>'}</section>`;
 }
 function simplePage(page) {
-  if (['banners','pages','settings','appearance','seo','team','reviews'].includes(page)) return cmsPage(page);
-  const notes = {
-    categories:'Categories products টেবিলের category কলাম থেকে নেওয়া হয়। নতুন ক্যাটাগরি পণ্য ফর্মে যোগ করুন।',
-    features:'সক্রিয় পণ্য এখানে দেখানো হচ্ছে। Featured selector এখনো আলাদা ডেটাবেজ field ব্যবহার করে না.',
-    logistics:'অর্ডারের status পরিবর্তন করে shipped/delivered চিহ্নিত করা যায়। কুরিয়ার API এখনো সংযুক্ত নয়।',
-    analytics:'ভিজিটর গণনার জন্য index.html-এ visit tracking যোগ করতে হবে এবং site_visits টেবিল সেটআপ করতে হবে.'
+  const notes={
+    categories:'Categories বর্তমানে products টেবিলের category কলাম থেকে নেওয়া হয়। নতুন ক্যাটাগরি যোগ করতে পণ্য ফর্মে নাম ব্যবহার করুন। আলাদা categories টেবিল নিশ্চিত না হওয়া পর্যন্ত এখানে শুধু বিদ্যমান ক্যাটাগরির তালিকা দেখানো হচ্ছে।',
+    reviews:'Reviews ম্যানেজ করার জন্য ডেটাবেজ টেবিল/কলাম এখনো নিশ্চিত করা হয়নি; তাই এখানে কোনো কাল্পনিক রিভিউ দেখানো হচ্ছে না।',
+    banners:'Homepage banner সম্পাদনার জন্য banner data কোথায় সংরক্ষিত হবে তা নির্ধারণ করা দরকার। এই সংস্করণে আপনার বর্তমান হোমপেজের banner স্বয়ংক্রিয়ভাবে পরিবর্তিত হবে না।',
+    pages:'স্ট্যাটিক Pages পরিবর্তন করতে আলাদা content-management data বা GitHub code update দরকার। এই ড্যাশবোর্ড এখন placeholder দেখাচ্ছে, যাতে ভুলভাবে তথ্য সংরক্ষণের দাবি না করা হয়।',
+    features:'Featured পণ্যের আলাদা flag/field নেই। বর্তমানে সক্রিয় পণ্যগুলো নিচে দেখা যাচ্ছে; আলাদা featured control যোগ করতে database field লাগবে।',
+    logistics:'এই প্যানেলে status পরিবর্তন করে shipped/delivered চিহ্নিত করা যায়। কুরিয়ার API বা tracking number-এর কলাম এখনো নিশ্চিত নয়।',
+    analytics:'এখানে বর্তমানে Supabase orders/products থেকে পাওয়া হিসাব দেখানো হচ্ছে। প্রকৃত visitor analytics পেতে analytics service সংযুক্ত করতে হবে।',
+    settings:'এই সংস্করণে SEO ও Appearance-এর সারাংশ দেখানো হচ্ছে। হোমপেজের title, meta description, banner বা theme এই প্যানেল থেকে পরিবর্তন হয় না; সেগুলোর জন্য আলাদা database-backed settings তৈরি করতে হবে।'
   };
-  if (page === 'categories') {
-    const cats = [...new Set(productsCache.map(p => p.category).filter(Boolean))];
-    return `<section class="panel"><h2>ক্যাটাগরি</h2><p class="muted">${esc(notes.categories)}</p>${cats.length ? cats.map(c => `<p>🗂️ ${esc(c)} <span class="muted">(${productsCache.filter(p => p.category === c).length} পণ্য)</span></p>`).join('') : '<div class="empty">ক্যাটাগরি নেই।</div>'}</section>`;
+  if(page==='categories'){
+    const cats=[...new Set(productsCache.map(p=>p.category).filter(Boolean))];
+    return `<section class="panel"><h2>ক্যাটাগরি</h2><p class="muted">${esc(notes.categories)}</p>${cats.length?cats.map(c=>`<p>🗂️ ${esc(c)} <span class="muted">(${productsCache.filter(p=>p.category===c).length} পণ্য)</span></p>`).join(''):'<div class="empty">ক্যাটাগরি নেই।</div>'}</section>`;
   }
-  if (page === 'features') return `<section class="panel"><h2>Featured Products</h2><p class="muted">${esc(notes.features)}</p>${productsCache.filter(p => p.is_active).map(p => `<p>⭐ ${esc(p.name)} — ${money(p.price)}</p>`).join('') || '<div class="empty">সক্রিয় পণ্য নেই।</div>'}</section>`;
-  if (page === 'logistics') return `<section class="panel"><h2>Tracking & Logistics</h2><p class="muted">${esc(notes.logistics)}</p>${ordersTable(ordersCache,true)}</section>`;
-  if (page === 'analytics') return `<div class="grid">${statCard('মোট অর্ডার',ordersCache.length)}${statCard('মোট পণ্য',productsCache.length)}${statCard('সক্রিয় পণ্য',productsCache.filter(p => p.is_active).length)}${statCard('Delivered অর্ডার',ordersCache.filter(o => String(o.status).toLowerCase() === 'delivered').length)}</div><section class="panel"><h2>Visitor Analytics</h2><p class="muted">${esc(notes.analytics)}</p><div id="visitorStats">ভিজিটর হিসাব দেখাতে site_visits টেবিল এবং হোমপেজ tracking setup লাগবে।</div><button class="btn secondary" data-action="load-visitors" type="button">ভিজিটর রিফ্রেশ</button></section>`;
-  return '<section class="panel"><h2>এই বিভাগ</h2><p class="muted">তথ্য লোড হয়নি।</p></section>';
+  if(page==='features'){
+    return `<section class="panel"><h2>Featured Products</h2><p class="muted">${esc(notes.features)}</p>${productsCache.filter(p=>p.is_active).map(p=>`<p>⭐ ${esc(p.name)} — ${money(p.price)}</p>`).join('')||'<div class="empty">সক্রিয় পণ্য নেই।</div>'}</section>`;
+  }
+  if(page==='logistics')return `<section class="panel"><h2>Logistics & Tracking</h2><p class="muted">${esc(notes.logistics)}</p>${ordersTable(ordersCache,true)}</section>`;
+  if(page==='analytics')return `<div class="grid">${statCard('মোট অর্ডার',ordersCache.length)}${statCard('মোট পণ্য',productsCache.length)}${statCard('সক্রিয় পণ্য',productsCache.filter(p=>p.is_active).length)}${statCard('Delivered অর্ডার',ordersCache.filter(o=>String(o.status).toLowerCase()==='delivered').length)}</div><section class="panel"><h2>Analytics</h2><p class="muted">${esc(notes.analytics)}</p></section>`;
+  return `<section class="panel"><h2>${esc(({reviews:'Reviews',banners:'Banners',pages:'Pages',settings:'Settings & SEO'})[page]||'বিভাগ')}</h2><p class="muted">${esc(notes[page]||'এই বিভাগটি পরে কনফিগার করা যাবে।')}</p></section>`;
 }
 function renderPage() {
-  if (!currentUser) return;
+  if(!currentUser)return;
   clearMessage();
-  const root = $('pageContent');
-  if (activePage === 'dashboard') root.innerHTML = dashboardPage();
-  else if (activePage === 'orders') root.innerHTML = `<section class="panel"><div class="panel-head"><h2>সব অর্ডার (${ordersCache.length})</h2><button class="btn secondary small" data-action="refresh" type="button">রিফ্রেশ</button></div>${ordersTable(ordersCache,true)}</section>`;
-  else if (activePage === 'incomplete') root.innerHTML = `<section class="panel"><h2>Incomplete Orders</h2><p class="muted">আলাদা incomplete/checkout field নিশ্চিত নয়; pending অর্ডারগুলো দেখানো হচ্ছে।</p>${ordersTable(ordersCache.filter(o => ['pending','incomplete','abandoned'].includes(String(o.status || 'pending').toLowerCase())),true)}</section>`;
-  else if (activePage === 'products') root.innerHTML = productsPage();
-  else root.innerHTML = simplePage(activePage);
-  if (['banners','pages','team','reviews'].includes(activePage)) loadCmsList(activePage);
-  if (['settings','appearance','seo'].includes(activePage)) loadSettings(activePage);
+  const root=$('pageContent');
+  if(activePage==='dashboard')root.innerHTML=dashboardPage();
+  else if(activePage==='orders')root.innerHTML=`<section class="panel"><div class="panel-head"><h2>সব অর্ডার (${ordersCache.length})</h2><button class="btn secondary small" data-action="refresh">রিফ্রেশ</button></div>${ordersTable(ordersCache,true)}</section>`;
+  else if(activePage==='incomplete')root.innerHTML=`<section class="panel"><h2>Incomplete Orders</h2><p class="muted">তোমার বর্তমান orders টেবিলে আলাদা incomplete/checkout field নিশ্চিত নয়। তাই এখানে pending অর্ডারগুলো দেখানো হচ্ছে।</p>${ordersTable(ordersCache.filter(o=>['pending','incomplete','abandoned'].includes(String(o.status||'pending').toLowerCase())),true)}</section>`;
+  else if(activePage==='products')root.innerHTML=productsPage();
+  else if(activePage==='addProduct')root.innerHTML=productForm();
+  else if(activePage==='editProduct'){const p=productsCache.find(x=>String(x.id)===String(editingProductId));root.innerHTML=p?productForm(p):'<section class="panel"><p>পণ্যটি পাওয়া যায়নি।</p><button class="btn secondary" data-action="cancel-product-form">তালিকায় ফিরে যান</button></section>';}
+  else root.innerHTML=simplePage(activePage);
 }
 async function uploadImage(file) {
-  if (!file || !file.name) return null;
-  if (!file.type.startsWith('image/')) throw new Error('শুধু ছবির ফাইল আপলোড করা যাবে।');
-  if (file.size > 5 * 1024 * 1024) throw new Error('ছবির সাইজ ৫ MB-এর কম হতে হবে।');
-  const safe = file.name.replace(/[^a-zA-Z0-9.-]/g,'') || 'product-image';
-  const path = currentUser.id + '/' + Date.now() + '-' + safe;
-  const {error} = await db.storage.from(BUCKET).upload(path,file,{contentType:file.type,upsert:false});
-  if (error) throw error;
+  if(!file)return null;
+  if(!file.type.startsWith('image/'))throw new Error('শুধু ছবির ফাইল আপলোড করা যাবে।');
+  if(file.size>5*1024*1024)throw new Error('ছবির সাইজ ৫ MB-এর কম হতে হবে।');
+  const safe=file.name.replace(/[^a-zA-Z0-9.-]/g,'')||'product-image';
+  const path=currentUser.id+'/'+Date.now()+'-'+safe;
+  const {error}=await db.storage.from(BUCKET).upload(path,file,{contentType:file.type,upsert:false});
+  if(error)throw error;
   return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
-
-$('loginForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  $('loginButton').disabled = true;
-  $('loginMessage').textContent = 'লগইন হচ্ছে...';
-  try {
-    const {data,error} = await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
-    if (error) throw error;
-    if (!setLoggedIn(data.user)) {
-      await db.auth.signOut();
-      throw new Error('এই ইমেইল Admin হিসেবে অনুমোদিত নয়।');
-    }
-    $('loginMessage').textContent = '';
-    await loadData();
-    setPage('dashboard');
-  } catch (err) {
-    $('loginMessage').textContent = 'লগইন হয়নি: ' + (err?.message || String(err));
-  } finally {
-    $('loginButton').disabled = false;
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();$('loginButton').disabled=true;$('loginMessage').textContent='লগইন হচ্ছে...';
+  try{
+    const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    if(error)throw error;
+    if(!setLoggedIn(data.user)){await db.auth.signOut();throw new Error('এই ইমেইল Admin হিসেবে অনুমোদিত নয়।');}
+    $('loginMessage').textContent='';await loadData();setPage('dashboard');
+  }catch(err){$('loginMessage').textContent='লগইন হয়নি: '+err.message;}
+  finally{$('loginButton').disabled=false;}
+});
+$('logoutButton').addEventListener('click',async()=>{await db.auth.signOut();setLoggedIn(null);});
+document.querySelectorAll('.nav[data-page]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.page)));
+$('pageContent').addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.action==='page-orders')return setPage('orders');
+  if(b.dataset.action==='page-products')return setPage('products');
+  if(b.dataset.action==='refresh'){await loadData();return;}
+  if(b.dataset.action==='add-product'){editingProductId=null;setPage('addProduct');return;}
+  if(b.dataset.action==='cancel-product-form'){editingProductId=null;setPage('products');return;}
+  if(b.dataset.editProduct){
+    const p=productsCache.find(x=>String(x.id)===b.dataset.editProduct);if(!p){message('পণ্যটি তালিকায় পাওয়া যায়নি।');return;}
+    editingProductId=p.id;setPage('editProduct');window.scrollTo({top:0,behavior:'smooth'});return;
   }
-});
-$('logoutButton').addEventListener('click', async () => {
-  await db.auth.signOut();
-  setLoggedIn(null);
-  $('loginMessage').textContent = 'আপনি লগআউট করেছেন।';
-});
-document.querySelectorAll('.nav[data-page]').forEach(b => b.addEventListener('click', () => setPage(b.dataset.page)));
-
-$('pageContent').addEventListener('click', async e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  if (b.dataset.action === 'page-orders') return setPage('orders');
-  if (b.dataset.action === 'page-products') return setPage('products');
-  if (b.dataset.action === 'refresh') { await loadData(); return; }
-  if (b.dataset.action === 'cancel-edit') { renderPage(); return; }
-  if (b.dataset.editProduct) {
-    const p = productsCache.find(x => String(x.id) === b.dataset.editProduct);
-    if (!p) return;
-    const listMarker = '<section class="panel"><div class="panel-head"><h2>পণ্যের তালিকা';
-    const currentHtml = $('pageContent').innerHTML;
-    const listIndex = currentHtml.indexOf(listMarker);
-    $('pageContent').innerHTML = productForm(p) + (listIndex >= 0 ? currentHtml.slice(listIndex) : '');
-    window.scrollTo({top:0,behavior:'smooth'});
+  if(b.dataset.deleteProduct){
+    const p=productsCache.find(x=>String(x.id)===b.dataset.deleteProduct);if(!p||!confirm(`"${p.name}" পণ্যটি ডিলিট করবেন?`))return;
+    try{
+      const {data,error}=await db.from('products').delete().eq('id',p.id).select('id');
+      if(error)throw error;
+      if(!data||data.length===0)throw new Error('ডেটাবেজ কোনো পণ্য ডিলিট হয়েছে বলে নিশ্চিত করেনি। Supabase products টেবিলের DELETE policy/permission পরীক্ষা করুন।');
+      await loadData();message('পণ্য ডিলিট হয়েছে।');
+    }catch(err){message('পণ্য ডিলিট হয়নি: '+(err.message||String(err)));}
     return;
   }
-  if (b.dataset.deleteProduct) {
-    const p = productsCache.find(x => String(x.id) === b.dataset.deleteProduct);
-    if (!p || !confirm(`"${p.name}" পণ্যটি ডিলিট করবেন?`)) return;
-    const {error} = await db.from('products').delete().eq('id',p.id);
-    if (error) message('পণ্য ডিলিট হয়নি: ' + error.message);
-    else { message('পণ্য ডিলিট হয়েছে।'); await loadData(); }
-    return;
-  }
-  if (b.dataset.detailId) {
-    const o = ordersCache.find(x => String(x.id) === b.dataset.detailId);
-    if (!o) return;
-    alert(`অর্ডার #${o.id}\nতারিখ: ${dateText(o.created_at)}\nক্রেতা: ${o.customer_name || ''}\nফোন: ${o.phone || ''}\nঠিকানা: ${o.address || ''}\nপণ্য: ${orderItems(o)}\nমোট: ${money(o.total_amount)}\nস্ট্যাটাস: ${o.status || 'pending'}`);
+  if(b.dataset.detailId){
+    const o=ordersCache.find(x=>String(x.id)===b.dataset.detailId);if(!o)return;
+    alert(`অর্ডার #${o.id}\nতারিখ: ${dateText(o.created_at)}\nক্রেতা: ${o.customer_name||''}\nফোন: ${o.phone||''}\nঠিকানা: ${o.address||''}\nপণ্য: ${orderItems(o)}\nমোট: ${money(o.total_amount)}\nস্ট্যাটাস: ${o.status||'pending'}`);return;
   }
 });
-$('pageContent').addEventListener('change', async e => {
-  const s = e.target.closest('select[data-status-id]');
-  if (!s) return;
-  s.disabled = true;
-  const {error} = await db.from('orders').update({status:s.value}).eq('id',s.dataset.statusId);
-  s.disabled = false;
-  if (error) message('স্ট্যাটাস পরিবর্তন হয়নি: ' + error.message);
-  else message('অর্ডারের স্ট্যাটাস আপডেট হয়েছে।');
-  await loadData();
+$('pageContent').addEventListener('change',async e=>{
+  const s=e.target.closest('select[data-status-id]');if(!s)return;
+  const id=s.dataset.statusId, status=s.value;
+  s.disabled=true;
+  const {error}=await db.from('orders').update({status}).eq('id',id);
+  s.disabled=false;
+  if(error){message('স্ট্যাটাস পরিবর্তন হয়নি: '+error.message);await loadData();}
+  else{message('অর্ডারের স্ট্যাটাস আপডেট হয়েছে।');await loadData();}
 });
-$('pageContent').addEventListener('submit', async e => {
-  if (e.target.id !== 'productForm') return;
-  e.preventDefault();
-  const form = e.target, fd = new FormData(form), save = form.querySelector('button[type=submit]');
-  save.disabled = true;
-  try {
-    const product = {
-      name:String(fd.get('name') || '').trim(),
-      price:Number(fd.get('price')),
-      category:String(fd.get('category') || '').trim(),
-      stock:Number(fd.get('stock')),
-      description:String(fd.get('description') || '').trim(),
-      is_active:fd.get('is_active') === 'on'
-    };
-    if (!product.name || !Number.isFinite(product.price) || product.price < 0 || !Number.isInteger(product.stock) || product.stock < 0) throw new Error('নাম, দাম ও স্টক সঠিকভাবে দিন।');
-    const image = await uploadImage(fd.get('image'));
-    if (image) product.image_url = image;
-    const id = form.dataset.editId;
-    const result = id ? await db.from('products').update(product).eq('id',id) : await db.from('products').insert(product);
-    if (result.error) throw result.error;
-    message(id ? 'পণ্য আপডেট হয়েছে।' : 'নতুন পণ্য যোগ হয়েছে।');
-    await loadData();
-    setPage('products');
-  } catch (err) {
-    message('পণ্য সংরক্ষণ হয়নি: ' + (err?.message || String(err)));
-  } finally {
-    save.disabled = false;
-  }
+$('pageContent').addEventListener('submit',async e=>{
+  if(e.target.id!=='productForm')return;
+  e.preventDefault();const form=e.target,fd=new FormData(form);
+  const save=form.querySelector('button[type=submit]');save.disabled=true;
+  try{
+    const product={name:String(fd.get('name')||'').trim(),price:Number(fd.get('price')),category:String(fd.get('category')||'').trim(),stock:Number(fd.get('stock')),description:String(fd.get('description')||'').trim(),is_active:fd.get('is_active')==='on'};
+    if(!product.name||!Number.isFinite(product.price)||product.price<0||!Number.isInteger(product.stock)||product.stock<0)throw new Error('নাম, দাম ও স্টক সঠিকভাবে দিন।');
+    const image=await uploadImage(fd.get('image'));if(image)product.image_url=image;
+    const id=form.dataset.editId;
+    const result=id?await db.from('products').update(product).eq('id',id):await db.from('products').insert(product);
+    if(result.error)throw result.error;
+    const successText=id?'পণ্য আপডেট হয়েছে।':'নতুন পণ্য যোগ হয়েছে।';
+    editingProductId=null;await loadData();setPage('products');message(successText);
+  }catch(err){message('পণ্য সংরক্ষণ হয়নি: '+err.message);}
+  finally{save.disabled=false;}
 });
-
-
-$('pageContent').addEventListener('submit', async e => {
-  const form = e.target;
-  if (!['bannerForm','pageForm','settingsForm','teamForm'].includes(form.id)) return;
-  e.preventDefault();
-  const button = form.querySelector('button[type="submit"]');
-  if (button) button.disabled = true;
-  try {
-    const fd = new FormData(form);
-    if (form.id === 'bannerForm') {
-      const file = fd.get('image');
-      const imageUrl = await uploadImage(file);
-      const record = {title:String(fd.get('title')||'').trim(), image_url:imageUrl,
-        subtitle:String(fd.get('subtitle')||''), button_text:String(fd.get('button_text')||''),
-        button_url:String(fd.get('button_url')||''), is_active:fd.get('is_active')==='on'};
-      const {error} = await db.from('site_banners').insert(record);
-      if (error) throw error;
-      message('ব্যানার সংরক্ষিত হয়েছে। হোমপেজে দেখাতে index.html-কে site_banners থেকে ব্যানার পড়ার সঙ্গে যুক্ত করতে হবে।');
-      form.reset(); await loadCmsList('banners');
-    } else if (form.id === 'pageForm') {
-      const record = {slug:String(fd.get('slug')), title:String(fd.get('title')||'').trim(), content:String(fd.get('content')||''), is_published:fd.get('is_published')==='on'};
-      const {error} = await db.from('site_pages').upsert(record,{onConflict:'slug'});
-      if (error) throw error;
-      message('পেজ সংরক্ষিত হয়েছে। হোমপেজে প্রকাশ করতে পেজ-rendering সংযোগও লাগবে.');
-      form.reset(); await loadCmsList('pages');
-    } else if (form.id === 'settingsForm') {
-      const records = [...form.querySelectorAll('[data-setting-key]')].map(input => ({key:input.dataset.settingKey,value:input.value.trim(),group:form.dataset.group}));
-      const {error} = await db.from('site_settings').upsert(records,{onConflict:'key'});
-      if (error) throw error;
-      message('সেটিংস সংরক্ষিত হয়েছে। হোমপেজে প্রয়োগ করতে index.html-কে এই সেটিংস পড়তে যুক্ত করতে হবে।');
-    } else if (form.id === 'teamForm') {
-      const record = {name:String(fd.get('name')||'').trim(),role:String(fd.get('role')||''),image_url:String(fd.get('image_url')||''),social_url:String(fd.get('social_url')||''),bio:String(fd.get('bio')||'')};
-      const {error} = await db.from('site_team').insert(record);
-      if (error) throw error;
-      message('টিম মেম্বার সংরক্ষিত হয়েছে।'); form.reset(); await loadCmsList('team');
-    }
-  } catch (err) {
-    message('সংরক্ষণ হয়নি: ' + (err?.message || String(err)) + '। SQL setup এবং Supabase Storage bucket/policy পরীক্ষা করুন।');
-  } finally { if (button) button.disabled = false; }
-});
-
-$('pageContent').addEventListener('click', async e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  if (b.dataset.action === 'load-banners') return loadCmsList('banners');
-  if (b.dataset.action === 'load-pages') return loadCmsList('pages');
-  if (b.dataset.action === 'load-team') return loadCmsList('team');
-  if (b.dataset.action === 'load-reviews') return loadCmsList('reviews');
-  if (b.dataset.action === 'load-settings') return loadSettings(b.dataset.group);
-  if (b.dataset.action === 'load-visitors') {
-    const target = $('visitorStats'); target.textContent = 'লোড হচ্ছে…';
-    const {count,error} = await db.from('site_visits').select('*',{count:'exact',head:true});
-    target.textContent = error ? 'ভিজিটর হিসাব পাওয়া যায়নি: ' + error.message + '। SQL setup এবং index.html tracking লাগবে।' : 'মোট recorded visits: ' + count;
-    return;
-  }
-  if (b.dataset.deleteCms && b.dataset.table) {
-    if (!confirm('এই তথ্যটি মুছে ফেলবেন?')) return;
-    const {error} = await db.from(b.dataset.table).delete().eq('id',b.dataset.deleteCms);
-    if (error) message('ডিলিট হয়নি: ' + error.message);
-    else { message('তথ্য মুছে ফেলা হয়েছে।'); await loadCmsList(activePage); }
-  }
-  if (b.dataset.editPage) {
-    const {data,error} = await db.from('site_pages').select('*').eq('id',b.dataset.editPage).single();
-    if (error) return message('পেজ লোড হয়নি: ' + error.message);
-    const form = $('pageForm');
-    if (form) {
-      form.elements.slug.value = data.slug || 'about-us';
-      form.elements.title.value = data.title || '';
-      form.elements.content.value = data.content || '';
-      form.elements.is_published.checked = !!data.is_published;
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
-  }
-});
-
-async function init() {
-  try {
-    const {data,error} = await db.auth.getSession();
-    if (error) throw error;
-    if (setLoggedIn(data.session?.user || null)) {
-      await loadData();
-      setPage('dashboard');
-    } else {
-      $('loginMessage').textContent = 'Admin ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।';
-    }
-    db.auth.onAuthStateChange((_event,session) => {
-      const allowed = setLoggedIn(session?.user || null);
-      if (allowed) loadData();
-    });
-  } catch (err) {
-    $('loginMessage').textContent = 'Supabase সংযোগে সমস্যা: ' + (err?.message || String(err));
-  }
+async function init(){
+  try{
+    const {data,error}=await db.auth.getSession();if(error)throw error;
+    if(setLoggedIn(data.session?.user||null)){await loadData();setPage('dashboard');}
+    else $('loginMessage').textContent='Admin ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।';
+    db.auth.onAuthStateChange((_event,session)=>{if(!setLoggedIn(session?.user||null)){return;}loadData();});
+  }catch(err){$('loginMessage').textContent='Supabase সংযোগে সমস্যা: '+err.message;}
 }
 init();
 </script>
